@@ -35,7 +35,7 @@ echo "Performing search and replace"
 EXCLUDES="( -path ./build -o -path ./out -o -path ./.git -o -path ./.gradle -o -path ./gradle -o -path ./.idea -o -path ./rename-project.bash )"
 # shellcheck disable=SC2086
 find . $EXCLUDES -prune -o -type f -exec sed -i.bak \
-  -e "s/hmpps-template-kotlin/$PROJECT_NAME/g" \
+  -e "s/hmpps-prisoner-cell-allocation-api/$PROJECT_NAME/g" \
   -e "s/HMPPS Template Kotlin/$PROJECT_DESCRIPTION/g" \
   -e "s/HmppsTemplateKotlin/$CLASS_NAME/g" \
   -e "s/hmppstemplatepackagename/$PACKAGE_NAME/g" {} \; -exec rm '{}.bak' \;
@@ -48,7 +48,7 @@ mv "src/test/${BASE}/hmppstemplatepackagename" "src/test/$BASE/$PACKAGE_NAME"
 mv "src/main/${BASE}/hmppstemplatepackagename" "src/main/$BASE/$PACKAGE_NAME"
 
 # and move helm stuff to new name
-mv "helm_deploy/hmpps-template-kotlin" "helm_deploy/$PROJECT_NAME"
+mv "helm_deploy/hmpps-prisoner-cell-allocation-api" "helm_deploy/$PROJECT_NAME"
 
 # rename kotlin files
 mv "src/main/$BASE/$PACKAGE_NAME/HmppsTemplateKotlin.kt" "src/main/$BASE/$PACKAGE_NAME/$CLASS_NAME.kt"
