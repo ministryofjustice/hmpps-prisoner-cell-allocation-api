@@ -1,10 +1,10 @@
-package uk.gov.justice.digital.hmpps.hmppstemplatepackagename.dto
+package uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
-data class RequestMoveToCellSwap(
+data class MoveToCellSwapRequest(
   @Schema(
     description = "The reason code for the move (from reason code domain CHG_HOUS_RSN) (defaults to ADM)",
     example = "ADM",

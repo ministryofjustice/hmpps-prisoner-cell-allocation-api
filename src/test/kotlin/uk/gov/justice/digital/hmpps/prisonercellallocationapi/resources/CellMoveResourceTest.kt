@@ -1,9 +1,9 @@
-package uk.gov.justice.digital.hmpps.hmppstemplatepackagename.resources
+package uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources
 
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
-import uk.gov.justice.digital.hmpps.hmppstemplatepackagename.dto.RequestMoveToCellSwap
-import uk.gov.justice.digital.hmpps.hmppstemplatepackagename.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.IntegrationTestBase
 import java.time.LocalDateTime
 
 class CellMoveResourceTest : IntegrationTestBase() {
@@ -14,7 +14,7 @@ class CellMoveResourceTest : IntegrationTestBase() {
       .put()
       .uri("/api/bookings/123456/move-to-cell-swap")
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .bodyValue(RequestMoveToCellSwap("ADM", LocalDateTime.now()))
+      .bodyValue(MoveToCellSwapRequest("ADM"))
       .exchange()
       .expectStatus().isOk
       .expectBody().json(
