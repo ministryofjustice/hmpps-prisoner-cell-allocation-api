@@ -40,25 +40,36 @@ class PrisonApiClientTest {
   }
 
   @Test
-  fun `mock test`() {
-    val date = LocalDateTime.now()
+  fun `move to cell swap successful submission`() {
 
-    mockServer.stubMoveToCellSwapPositiveResponse(988507, "ADM", date)
+    mockServer.stubMoveToCellSwapPositiveResponse(988507)
 
-    val cellSwapResponse = prisonApiClient.moveToCellSwap(988507, MoveToCellSwapRequest(
-     "ADM",
-      date
-    ))
+    val requestBody =  MoveToCellSwapRequest(
+      "ADM",
+      LocalDateTime.now(),
+    )
 
-    assertThat(cellSwapResponse.bookingId).isEqualTo(988507)
-    assertThat(cellSwapResponse.agencyId).isEqualTo("ACI")
-    assertThat(cellSwapResponse.assignedLivingUnitId).isEqualTo(411283)
-    assertThat(cellSwapResponse.assignedLivingUnitDesc).isEqualTo("ACI-CSWAP")
-    assertThat(cellSwapResponse.bedAssignmentHistorySequence).isEqualTo(null)
+    val cellMoveResponse = CellMoveResponse(
+      bookingId = 988507,
+      agencyId = "ACI",
+      assignedLivingUnitId = 411283,
+      assignedLivingUnitDesc = "ACI-CSWAP",
+      bedAssignmentHistorySequence = null,
+    )
+
+
+    val response = prisonApiClient.moveToCellSwap(988507, requestBody )
+
+    assertThat(response).isEqualTo(cellMoveResponse)
 
     mockServer.verify(
       WireMock.putRequestedFor(WireMock.urlEqualTo("/api/bookings/988507/move-to-cell-swap")),
     )
-    }
   }
+
+  @Test
+  fun `move to cell swap failed`() {
+
+  }
+}
 

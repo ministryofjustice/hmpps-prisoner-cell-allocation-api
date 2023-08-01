@@ -6,21 +6,17 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.clientapi.PrisonApiClient
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMoveResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.clientapi.PrisonApiClient
 
 @RestController
 @RequestMapping(value = ["/api/"], produces = ["application/json"])
-class CellMoveResource (
+class CellMoveResource(
   private val prisonApiClient: PrisonApiClient,
-  ) {
+) {
 
   @Operation(
     summary = "Move the person temporarily out of cell",
