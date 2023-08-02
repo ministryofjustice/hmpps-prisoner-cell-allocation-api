@@ -17,19 +17,24 @@ class PrisonApiMockServer : WireMockServer(9005) {
 
     stubFor(
       put("/api/bookings/$bookingId/move-to-cell-swap")
+        .withRequestBody(
+          WireMock.equalToJson(
+            """{"reasonCode":"ADM","dateTime":[2023,8,1,10,0]}""",
+          ),
+        )
         .willReturn(
           aResponse()
             .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
             .withStatus(200)
             .withBody(
               """
-              {
-                  "bookingId": 988507,
-                  "agencyId": "ACI",
-                  "assignedLivingUnitId": 411283,
-                  "assignedLivingUnitDesc": "ACI-CSWAP",
-                  "bedAssignmentHistorySequence": null
-              }
+            {
+              "bookingId": 988507,
+              "agencyId": "ACI",
+              "assignedLivingUnitId": 411283,
+              "assignedLivingUnitDesc": "ACI-CSWAP",
+              "bedAssignmentHistorySequence": null
+            }
 
             """.trimIndent(),
             ),

@@ -11,9 +11,11 @@ configurations {
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+  implementation("org.projectlombok:lombok:1.18.20")
 
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.springframework.security:spring-security-test")
+  testImplementation("org.eclipse.jetty:jetty-reactive-httpclient:3.0.8")
 }
 
 java {
