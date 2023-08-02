@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCe
 
 @Component
 class PrisonApiClient(
-//    @Qualifier("prisonApiWebClient")
+    @Qualifier("prisonApiWebClient")
     private val webClient: WebClient,
 ) {
 
