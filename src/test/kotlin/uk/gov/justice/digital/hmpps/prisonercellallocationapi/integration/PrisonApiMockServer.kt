@@ -5,11 +5,6 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.put
 import org.springframework.http.MediaType
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.utils.loadJson
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 
 class PrisonApiMockServer : WireMockServer(9005) {
 
@@ -41,4 +36,23 @@ class PrisonApiMockServer : WireMockServer(9005) {
         ),
     )
   }
+
+  fun stubCellSwapFails(bookingId: Long, status: Int) {
+    stubFor(
+      put("/api/bookings/$bookingId/move-to-cell-swap")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+            .withStatus(status)
+            .withBody(
+              """{
+                "status": $status,
+                "userMessage": "The date cannot be in the future",
+                "developerMessage": "The date cannot be in the future"
+                }""",
+            ),
+        ),
+    )
+  }
+
 }

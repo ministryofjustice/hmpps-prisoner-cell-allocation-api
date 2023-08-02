@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.prisonercellallocationapi.clientapi
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.eclipse.jetty.client.HttpClient
 import org.eclipse.jetty.client.api.Request
 import org.junit.jupiter.api.AfterAll
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import org.springframework.http.client.reactive.JettyClientHttpConnector
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ClientErrorResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ClientException
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMoveResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
@@ -50,7 +53,7 @@ class PrisonApiClientTest {
         return enhance(request)
       }
     }
-    val webClient =  WebClient.builder()
+    val webClient = WebClient.builder()
       .baseUrl("http://localhost:${mockServer.port()}")
       .clientConnector(JettyClientHttpConnector(httpClient))
       .build();
@@ -116,12 +119,11 @@ class PrisonApiClientTest {
 
   @Test
   fun `move to cell swap successful submission`() {
-
     mockServer.stubMoveToCellSwapPositiveResponse(988507)
 
-    val requestBody =  MoveToCellSwapRequest(
+    val requestBody = MoveToCellSwapRequest(
       "ADM",
-      LocalDateTime.of(2023,8,1,10,0,0),
+      LocalDateTime.of(2023, 8, 1, 10, 0, 0),
     )
 
     val cellMoveResponse = CellMoveResponse(
@@ -132,10 +134,10 @@ class PrisonApiClientTest {
       bedAssignmentHistorySequence = null,
     )
 
+    val response = prisonApiClient.moveToCellSwap(988507, requestBody)
 
-    val response = prisonApiClient.moveToCellSwap(988507, requestBody )
-
-    assertThat(response).isEqualTo(cellMoveResponse)
+    assertThat(response)
+      .isEqualTo(cellMoveResponse)
 
     mockServer.verify(
       WireMock.putRequestedFor(WireMock.urlEqualTo("/api/bookings/988507/move-to-cell-swap")),
@@ -143,8 +145,25 @@ class PrisonApiClientTest {
   }
 
   @Test
-  fun `move to cell swap failed`() {
+  fun `move to cell swap request fails`() {
+    mockServer.stubCellSwapFails(123456, 400)
 
+    val requestBody = MoveToCellSwapRequest(
+      "ADM",
+      LocalDateTime.now(),
+    )
+
+    assertThatThrownBy {
+      prisonApiClient.moveToCellSwap(123456, requestBody)
+    } .isEqualTo(
+        ClientException(
+          response = ClientErrorResponse(
+            status = 400,
+            userMessage = "The date cannot be in the future",
+            developerMessage = "The date cannot be in the future",
+          ),
+          message = "The date cannot be in the future",
+        ),
+      )
   }
 }
-
