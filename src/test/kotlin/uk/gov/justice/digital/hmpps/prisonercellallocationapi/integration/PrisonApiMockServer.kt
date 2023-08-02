@@ -9,7 +9,6 @@ import org.springframework.http.MediaType
 class PrisonApiMockServer : WireMockServer(9005) {
 
   fun stubMoveToCellSwapPositiveResponse(bookingId: Long) {
-
     stubFor(
       put("/api/bookings/$bookingId/move-to-cell-swap")
         .withRequestBody(
@@ -31,7 +30,7 @@ class PrisonApiMockServer : WireMockServer(9005) {
               "bedAssignmentHistorySequence": null
             }
 
-            """.trimIndent(),
+              """.trimIndent(),
             ),
         ),
     )
@@ -54,5 +53,4 @@ class PrisonApiMockServer : WireMockServer(9005) {
         ),
     )
   }
-
 }

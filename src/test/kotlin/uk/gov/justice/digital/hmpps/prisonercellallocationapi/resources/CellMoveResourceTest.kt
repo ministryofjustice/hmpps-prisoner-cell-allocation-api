@@ -2,9 +2,8 @@ package uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources
 
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.IntegrationTestBase
-import java.time.LocalDateTime
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
 
 class CellMoveResourceTest : IntegrationTestBase() {
 

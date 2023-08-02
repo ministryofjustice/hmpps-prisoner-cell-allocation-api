@@ -10,8 +10,8 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCe
 
 @Component
 class PrisonApiClient(
-    @Qualifier("prisonApiWebClient")
-    private val webClient: WebClient,
+  @Qualifier("prisonApiWebClient")
+  private val webClient: WebClient,
 ) {
 
   fun moveToCellSwap(bookingId: Long, detail: MoveToCellSwapRequest): CellMoveResponse =

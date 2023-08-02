@@ -1,5 +1,5 @@
 info.app:
-  name: HMPPS Template Kotlin
+  name: HMPPS Prisoner cell allocation api
   version: 1.0
 
 spring:
@@ -17,6 +17,22 @@ spring:
     group:
       test:
         - "stdout"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${oauth.endpoint.url}/.well-known/jwks.json
+      client:
+        registration:
+          basm-api:
+            provider: basm-auth
+            client-id: ${basm.client.client-id}
+            client-secret: ${basm.client.client-secret}
+            authorization-grant-type: client_credentials
+        provider:
+          basm-auth:
+            token-uri: ${basm.endpoint.url}/oauth/token
+
 
 server:
   port: 8080

@@ -21,7 +21,6 @@ import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
 
-
 class PrisonApiClientTest {
   private lateinit var prisonApiClient: PrisonApiClient
 
@@ -56,7 +55,7 @@ class PrisonApiClientTest {
     val webClient = WebClient.builder()
       .baseUrl("http://localhost:${mockServer.port()}")
       .clientConnector(JettyClientHttpConnector(httpClient))
-      .build();
+      .build()
 
     prisonApiClient = PrisonApiClient(webClient)
   }
@@ -155,15 +154,15 @@ class PrisonApiClientTest {
 
     assertThatThrownBy {
       prisonApiClient.moveToCellSwap(123456, requestBody)
-    } .isEqualTo(
-        ClientException(
-          response = ClientErrorResponse(
-            status = 400,
-            userMessage = "The date cannot be in the future",
-            developerMessage = "The date cannot be in the future",
-          ),
-          message = "The date cannot be in the future",
+    }.isEqualTo(
+      ClientException(
+        response = ClientErrorResponse(
+          status = 400,
+          userMessage = "The date cannot be in the future",
+          developerMessage = "The date cannot be in the future",
         ),
-      )
+        message = "The date cannot be in the future",
+      ),
+    )
   }
 }
