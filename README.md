@@ -1,4 +1,5 @@
 # hmpps-prisoner-cell-allocation-api
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://cell-allocation-api-dev.prison.service.justice.gov.uk/swagger-ui.html)
 
 This service provides:
 * Cell allocation functionality
