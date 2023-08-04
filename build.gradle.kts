@@ -17,6 +17,9 @@ dependencies {
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.eclipse.jetty:jetty-reactive-httpclient:3.0.8")
   testImplementation("org.springframework.security:spring-security-test")
+  testImplementation("io.jsonwebtoken:jjwt-api:0.11.5")
+  testImplementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+  testImplementation("io.jsonwebtoken:jjwt-orgjson:0.11.5")
 }
 
 java {

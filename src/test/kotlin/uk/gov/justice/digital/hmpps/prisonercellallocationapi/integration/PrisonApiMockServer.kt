@@ -23,7 +23,7 @@ class PrisonApiMockServer : WireMockServer(9005) {
             .withBody(
               """
             {
-              "bookingId": 988507,
+              "bookingId": $bookingId,
               "agencyId": "ACI",
               "assignedLivingUnitId": 411283,
               "assignedLivingUnitDesc": "ACI-CSWAP",
