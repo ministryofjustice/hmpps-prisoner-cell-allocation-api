@@ -18,6 +18,7 @@ abstract class IntegrationTestBase {
 
   companion object {
     internal val prisonApiMockServer = PrisonApiMockServer()
+
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -30,7 +31,6 @@ abstract class IntegrationTestBase {
       prisonApiMockServer.stop()
     }
   }
-
 
   init {
     // Resolves an issue where Wiremock keeps previous sockets open from other tests causing connection resets

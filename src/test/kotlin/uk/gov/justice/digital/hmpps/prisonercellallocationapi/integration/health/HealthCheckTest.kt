@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.healt
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.stub
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.IntegrationTestBase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -89,7 +88,6 @@ class HealthCheckTest : IntegrationTestBase() {
       .jsonPath("components.prisonApiHealth.details.HttpStatus").isEqualTo("NOT_FOUND")
   }
   private fun stubPing(status: Int) {
-
     prisonApiMockServer.stubFor(
       WireMock.get("/health/ping").willReturn(
         WireMock.aResponse()
