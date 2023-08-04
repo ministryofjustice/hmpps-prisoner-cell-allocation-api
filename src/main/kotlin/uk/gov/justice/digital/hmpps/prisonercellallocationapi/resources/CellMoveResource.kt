@@ -60,7 +60,7 @@ class CellMoveResource(
     ],
   )
   @PutMapping(path = ["/bookings/{bookingId}/move-to-cell-swap"])
-  @PreAuthorize("hasRole('ROLE_CELL_MOVE')")
+  //@PreAuthorize("hasRole('ROLE_CELL_MOVE')")
   fun moveToCellSwap(
     @Schema(description = "Booking Id", example = "123345", required = true)
     @PathVariable
