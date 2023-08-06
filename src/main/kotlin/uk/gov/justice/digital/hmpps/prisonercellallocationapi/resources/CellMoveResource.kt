@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,6 +22,8 @@ class CellMoveResource(
   private val prisonApiClient: PrisonApiClient,
 ) {
 
+  // The role name will be setup in separate story
+  // @PreAuthorize("hasRole('ROLE_CELL_MOVE')")
   @Operation(
     summary = "Move the person temporarily out of cell",
     description = "Move the person temporarily out of the cell",
@@ -60,7 +61,6 @@ class CellMoveResource(
     ],
   )
   @PutMapping(path = ["/bookings/{bookingId}/move-to-cell-swap"])
-  //@PreAuthorize("hasRole('ROLE_CELL_MOVE')")
   fun moveToCellSwap(
     @Schema(description = "Booking Id", example = "123345", required = true)
     @PathVariable

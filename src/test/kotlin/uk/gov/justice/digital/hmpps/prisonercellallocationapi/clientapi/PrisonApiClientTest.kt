@@ -11,12 +11,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import org.springframework.http.client.reactive.JettyClientHttpConnector
-import org.springframework.http.codec.ClientCodecConfigurer
-import org.springframework.http.codec.json.Jackson2JsonDecoder
-import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.WebClient
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ClientErrorResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ClientException
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.NoBodyClientException
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMoveResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
@@ -65,7 +62,6 @@ class PrisonApiClientTest {
 
   private fun enhance(inboundRequest: Request): Request? {
     val log = StringBuilder()
-    // Request Logging
     inboundRequest.onRequestBegin { request ->
       log.append("Request: \n")
         .append("URI: ")
@@ -88,8 +84,6 @@ class PrisonApiClientTest {
       log.append("Request Body:\n$bufferAsString")
     }
     log.append("\n")
-
-    // Response Logging
     inboundRequest.onResponseBegin { response ->
       log.append("Response:\n")
         .append("Status: ")
@@ -100,8 +94,7 @@ class PrisonApiClientTest {
       log.append("Headers:\n")
       for (header in response.getHeaders()) {
         log.append(
-          """		${header.name} : ${header.value}
-""",
+          """${header.name} : ${header.value}""",
         )
       }
     }
@@ -110,12 +103,9 @@ class PrisonApiClientTest {
       log.append("Response Body:\n$bufferAsString")
     }
 
-    // Add actual log invocation
     logger.info("HTTP ->\n")
     inboundRequest.onRequestSuccess { request -> logger.info(log.toString()) }
     inboundRequest.onResponseSuccess { response -> logger.info(log.toString()) }
-
-    // Return original request
     return inboundRequest
   }
 
@@ -148,7 +138,7 @@ class PrisonApiClientTest {
 
   @Test
   fun `move to cell swap request fails`() {
-    mockServer.stubCellSwapFails(123456, 400)
+    mockServer.stubCellSwapNegativeResponse(123456)
 
     val requestBody = MoveToCellSwapRequest(
       "ADM",
@@ -159,13 +149,46 @@ class PrisonApiClientTest {
       prisonApiClient.moveToCellSwap(123456, requestBody)
     }.isEqualTo(
       ClientException(
-        response = ClientErrorResponse(
-          status = 400,
-          userMessage = "The date cannot be in the future",
-          developerMessage = "The date cannot be in the future",
-        ),
-        message = "The date cannot be in the future",
+        status = 400,
+        userMessage = "The date cannot be in the future",
+        developerMessage = "The date cannot be in the future",
       ),
+    )
+  }
+
+  @Test
+  fun `move to cell swap location not found`() {
+    mockServer.stubCellSwapLocationNotFoundResponse(123456)
+
+    val requestBody = MoveToCellSwapRequest(
+      "ADM",
+      LocalDateTime.now(),
+    )
+
+    assertThatThrownBy {
+      prisonApiClient.moveToCellSwap(123456, requestBody)
+    }.isEqualTo(
+      ClientException(
+        status = 404,
+        userMessage = "CSWAP location not found for NMI",
+        developerMessage = "CSWAP location not found for NMI",
+      ),
+    )
+  }
+
+  @Test
+  fun `move to cell swap no access`() {
+    mockServer.stubCellSwapUnauthorizedResponse(123456)
+
+    val requestBody = MoveToCellSwapRequest(
+      "ADM",
+      LocalDateTime.now(),
+    )
+
+    assertThatThrownBy {
+      prisonApiClient.moveToCellSwap(123456, requestBody)
+    }.isEqualTo(
+      NoBodyClientException(response = 401),
     )
   }
 }

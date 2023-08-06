@@ -60,5 +60,4 @@ abstract class IntegrationTestBase {
     scopes: List<String> = listOf(),
     username: String = "prisoner-cell-allocation-api-user",
   ) = jwtAuthHelper.getAuthorisation(user = username, roles = roles, scopes = scopes)
-
 }

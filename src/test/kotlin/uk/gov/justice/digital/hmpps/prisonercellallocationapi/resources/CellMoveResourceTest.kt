@@ -10,7 +10,6 @@ class CellMoveResourceTest : IntegrationTestBase() {
 
   @Test
   fun `The person moved to temporary cell`() {
-
     prisonApiMockServer.stubMoveToCellSwapPositiveResponse(988507)
     webTestClient
       .put()
@@ -28,9 +27,57 @@ class CellMoveResourceTest : IntegrationTestBase() {
       .expectBody().json(
         """
         {
-          "bookingId": 988507
+          "bookingId": 988507,
+          "agencyId": "ACI",
+          "assignedLivingUnitId": 411283,
+          "assignedLivingUnitDesc": "ACI-CSWAP"
         }
         """.trimIndent(),
       )
+  }
+
+  @Test
+  fun `The swap location not found when person moved to temporary cell`() {
+    prisonApiMockServer.stubCellSwapLocationNotFoundResponse(988507)
+    webTestClient
+      .put()
+      .uri("/api/bookings/988507/move-to-cell-swap")
+      .headers(
+        setAuthorisation(
+          roles = listOf("ROLE_VIEW_ARRIVALS"),
+          scopes = listOf("read", "write"),
+        ),
+      )
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .bodyValue(MoveToCellSwapRequest("ADM", LocalDateTime.of(2023, 8, 1, 10, 0, 0)))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody().json(
+        """
+        {
+          "status":404,
+          "userMessage":"CSWAP location not found for NMI",
+          "developerMessage":"CSWAP location not found for NMI"
+        }
+        """.trimIndent(),
+      )
+  }
+
+  @Test
+  fun `Unauthorized response from prison api should be proxy to the client`() {
+    prisonApiMockServer.stubCellSwapUnauthorizedResponse(988507)
+    webTestClient
+      .put()
+      .uri("/api/bookings/988507/move-to-cell-swap")
+      .headers(
+        setAuthorisation(
+          roles = listOf("ROLE_VIEW_ARRIVALS"),
+          scopes = listOf("read"),
+        ),
+      )
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .bodyValue(MoveToCellSwapRequest("ADM", LocalDateTime.of(2023, 8, 1, 10, 0, 0)))
+      .exchange()
+      .expectStatus().isUnauthorized
   }
 }
