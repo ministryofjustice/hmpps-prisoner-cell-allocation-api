@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppstemplatepackagename.config
+package uk.gov.justice.digital.hmpps.prisonercellallocationapi.config
 
 import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
-class HmppsTemplateKotlinExceptionHandler {
+class ExceptionHandler {
   @ExceptionHandler(ValidationException::class)
   fun handleValidationException(e: Exception): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: {}", e.message)
@@ -20,6 +20,44 @@ class HmppsTemplateKotlinExceptionHandler {
         ErrorResponse(
           status = BAD_REQUEST,
           userMessage = "Validation failure: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(ClientException::class)
+  fun handleClientException(e: ClientException): ResponseEntity<ErrorResponse> {
+    log.warn(
+      "Client exception: status {} userMessage {} developerMessage {}",
+      e.status,
+      e.userMessage,
+      e.developerMessage,
+      e,
+    )
+    return ResponseEntity
+      .status(e.status ?: INTERNAL_SERVER_ERROR.value())
+      .body(
+        ErrorResponse(
+          status = e.status ?: INTERNAL_SERVER_ERROR.value(),
+          userMessage = e.userMessage,
+          developerMessage = e.developerMessage,
+        ),
+      )
+  }
+
+  @ExceptionHandler(NoBodyClientException::class)
+  fun handleClientErrorException(e: NoBodyClientException): ResponseEntity<ErrorResponse?>? {
+    log.warn(
+      "Client exception: message {} ",
+      e.message,
+      e,
+    )
+    return ResponseEntity
+      .status(e.response)
+      .body(
+        ErrorResponse(
+          status = e.response,
+          userMessage = "Unexpected error: ${e.message}",
           developerMessage = e.message,
         ),
       )
@@ -46,17 +84,14 @@ class HmppsTemplateKotlinExceptionHandler {
 
 data class ErrorResponse(
   val status: Int,
-  val errorCode: Int? = null,
   val userMessage: String? = null,
   val developerMessage: String? = null,
-  val moreInfo: String? = null,
+
 ) {
   constructor(
     status: HttpStatus,
-    errorCode: Int? = null,
     userMessage: String? = null,
     developerMessage: String? = null,
-    moreInfo: String? = null,
   ) :
-    this(status.value(), errorCode, userMessage, developerMessage, moreInfo)
+    this(status.value(), userMessage, developerMessage)
 }

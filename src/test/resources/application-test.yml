@@ -4,3 +4,15 @@ server:
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
+
+spring:
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
+oauth:
+  endpoint.url: http://localhost:8090/auth
+
+prison:
+  endpoint.url: http://localhost:9005

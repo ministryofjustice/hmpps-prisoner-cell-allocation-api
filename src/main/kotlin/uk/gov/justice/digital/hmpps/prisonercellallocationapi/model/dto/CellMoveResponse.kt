@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppstemplatepackagename.dto
+package uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
@@ -25,6 +25,6 @@ data class CellMoveResponse(
   val assignedLivingUnitDesc: String? = null,
 
   @Schema(description = "Bed assignment sequence associated with the entry created for this cell move ", example = "2")
-  private val bedAssignmentHistorySequence: Int? = null,
+  val bedAssignmentHistorySequence: Int? = null,
 
 )

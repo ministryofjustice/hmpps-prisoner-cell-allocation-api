@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppstemplatepackagename.resources
+package uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -11,14 +11,19 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.hmppstemplatepackagename.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppstemplatepackagename.dto.CellMoveResponse
-import uk.gov.justice.digital.hmpps.hmppstemplatepackagename.dto.RequestMoveToCellSwap
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.clientapi.PrisonApiClient
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMoveResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
 
 @RestController
 @RequestMapping(value = ["/api/"], produces = ["application/json"])
-class CellMoveResource {
+class CellMoveResource(
+  private val prisonApiClient: PrisonApiClient,
+) {
 
+  // The role name will be setup in separate story
+  // @PreAuthorize("hasRole('ROLE_CELL_MOVE')")
   @Operation(
     summary = "Move the person temporarily out of cell",
     description = "Move the person temporarily out of the cell",
@@ -64,6 +69,6 @@ class CellMoveResource {
     @RequestBody
     @Valid
     @NotNull
-    requestMoveToCellSwap: RequestMoveToCellSwap,
-  ): CellMoveResponse = CellMoveResponse(bookingId = bookingId)
+    moveToCellSwapRequest: MoveToCellSwapRequest,
+  ): CellMoveResponse = prisonApiClient.moveToCellSwap(bookingId, moveToCellSwapRequest)
 }

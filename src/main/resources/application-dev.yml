@@ -1,0 +1,7 @@
+oauth:
+  endpoint:
+    url: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
+
+prison:
+  endpoint:
+    url: "https://api-dev.prison.service.justice.gov.uk"
