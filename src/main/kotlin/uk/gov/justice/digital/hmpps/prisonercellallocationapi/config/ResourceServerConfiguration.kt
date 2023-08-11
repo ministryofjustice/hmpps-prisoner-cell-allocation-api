@@ -30,6 +30,12 @@ class ResourceServerConfiguration {
         )
           .permitAll().anyRequest().authenticated()
       }
-      .also { it.oauth2ResourceServer().jwt().jwtAuthenticationConverter(AuthAwareTokenConverter()) }
+      .also {
+        it.oauth2ResourceServer { oauth2ResourceServerCustomizer ->
+          oauth2ResourceServerCustomizer.jwt { jwtCustomizer ->
+            jwtCustomizer.jwtAuthenticationConverter(AuthAwareTokenConverter())
+          }
+        }
+      }
       .build()
 }
