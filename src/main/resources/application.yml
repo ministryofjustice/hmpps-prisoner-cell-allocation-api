@@ -24,14 +24,14 @@ spring:
           jwk-set-uri: ${oauth.endpoint.url}/.well-known/jwks.json
       client:
         registration:
-          basm-api:
-            provider: basm-auth
-            client-id: ${basm.client.client-id}
-            client-secret: ${basm.client.client-secret}
+          prion-api:
+            provider: auth-provider
+            client-id: ${prion.client.client-id}
+            client-secret: ${prion.client.client-secret}
             authorization-grant-type: client_credentials
         provider:
-          basm-auth:
-            token-uri: ${basm.endpoint.url}/oauth/token
+          auth-provider:
+            token-uri: ${oauth.endpoint.url}/oauth/token
 
 
 server:
