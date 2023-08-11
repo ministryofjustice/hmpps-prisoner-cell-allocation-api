@@ -1,8 +1,10 @@
-
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.3.0-beta"
-  kotlin("plugin.spring") version "1.8.22"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.3.0"
+  kotlin("plugin.spring") version "1.9.0"
 }
+
+val jsonwebtokenVersion by extra("0.11.5")
+val springBootStarterOauth2Version by extra("3.1.2")
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
@@ -10,16 +12,16 @@ configurations {
 
 dependencies {
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
-  implementation("org.springframework.boot:spring-boot-starter-webflux")
-  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-  implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+  implementation("org.springframework.boot:spring-boot-starter-webflux:$springBootStarterOauth2Version")
+  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:$springBootStarterOauth2Version")
+  implementation("org.springframework.boot:spring-boot-starter-oauth2-client:$springBootStarterOauth2Version")
 
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.eclipse.jetty:jetty-reactive-httpclient:3.0.8")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("io.jsonwebtoken:jjwt-api:0.11.5")
-  testImplementation("io.jsonwebtoken:jjwt-impl:0.11.5")
-  testImplementation("io.jsonwebtoken:jjwt-orgjson:0.11.5")
+  testImplementation("io.jsonwebtoken:jjwt-api:$jsonwebtokenVersion")
+  testImplementation("io.jsonwebtoken:jjwt-impl:$jsonwebtokenVersion")
+  testImplementation("io.jsonwebtoken:jjwt-orgjson:$jsonwebtokenVersion")
 }
 
 java {

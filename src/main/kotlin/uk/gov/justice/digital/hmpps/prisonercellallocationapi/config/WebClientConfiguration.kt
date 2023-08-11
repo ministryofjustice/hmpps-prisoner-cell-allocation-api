@@ -21,7 +21,6 @@ import org.springframework.web.reactive.function.client.WebClient
 class WebClientConfiguration(
   @Value("\${prison.endpoint.url}") private val prisonApiBaseUrl: String,
 ) {
-
   @Bean
   fun prisonApiWebClient(): WebClient {
     val exchangeStrategies = ExchangeStrategies.builder()
@@ -61,8 +60,12 @@ class WebClientConfiguration(
 
       next.exchange(
         ClientRequest.from(request)
-          .header(AUTHORIZATION, "Bearer $token")
+          .header(AUTHORIZATION, "$bearer $token")
           .build(),
       )
     }
+
+  companion object {
+    const val bearer: String = "Bearer"
+  }
 }

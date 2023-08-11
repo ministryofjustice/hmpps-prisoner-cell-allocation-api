@@ -12,12 +12,16 @@ import org.springframework.security.web.SecurityFilterChain
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 class ResourceServerConfiguration {
+
   @Bean
   fun securityFilterChain(http: HttpSecurity): SecurityFilterChain =
     http
-      .sessionManagement()
-      .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-      .and().csrf().disable()
+      .sessionManagement { sessionManagement ->
+        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+      }
+      .csrf { csrfManagement ->
+        csrfManagement.disable()
+      }
       .authorizeHttpRequests { auth ->
         auth.requestMatchers(
           "/webjars/**", "/favicon.ico", "/csrf",
@@ -26,6 +30,12 @@ class ResourceServerConfiguration {
         )
           .permitAll().anyRequest().authenticated()
       }
-      .also { it.oauth2ResourceServer().jwt().jwtAuthenticationConverter(AuthAwareTokenConverter()) }
+      .also {
+        it.oauth2ResourceServer { oauth2ResourceServerCustomizer ->
+          oauth2ResourceServerCustomizer.jwt { jwtCustomizer ->
+            jwtCustomizer.jwtAuthenticationConverter(AuthAwareTokenConverter())
+          }
+        }
+      }
       .build()
 }

@@ -12,6 +12,10 @@ class AuthAwareTokenConverter : Converter<Jwt, AbstractAuthenticationToken> {
   private val jwtGrantedAuthoritiesConverter: Converter<Jwt, Collection<GrantedAuthority>> =
     JwtGrantedAuthoritiesConverter()
 
+  companion object {
+    const val userName: String = "user_name"
+    const val clientId: String = "client_id"
+  }
   override fun convert(jwt: Jwt): AbstractAuthenticationToken {
     val claims = jwt.claims
     val principal = findPrincipal(claims)
@@ -20,10 +24,10 @@ class AuthAwareTokenConverter : Converter<Jwt, AbstractAuthenticationToken> {
   }
 
   private fun findPrincipal(claims: Map<String, Any?>): String {
-    return if (claims.containsKey("user_name")) {
-      claims["user_name"] as String
+    return if (claims.containsKey(userName)) {
+      claims[userName] as String
     } else {
-      claims["client_id"] as String
+      claims[clientId] as String
     }
   }
 

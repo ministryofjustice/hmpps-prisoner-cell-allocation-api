@@ -29,13 +29,13 @@ class ClientTrackingInterceptor : HandlerInterceptor {
     if (StringUtils.startsWithIgnoreCase(token, bearer)) {
       try {
         val jwtBody = getClaimsFromJWT(token)
-        val user = jwtBody.getClaim("user_name")?.toString()
+        val user = jwtBody.getClaim(AuthAwareTokenConverter.userName)?.toString()
         val currentSpan = Span.current()
         user?.run {
           currentSpan.setAttribute("username", this) // username in customDimensions
           currentSpan.setAttribute("enduser.id", this) // user_Id at the top level of the request
         }
-        currentSpan.setAttribute("clientId", jwtBody.getClaim("client_id").toString())
+        currentSpan.setAttribute("clientId", jwtBody.getClaim(AuthAwareTokenConverter.clientId).toString())
       } catch (e: ParseException) {
         log.warn("problem decoding jwt public key for application insights", e)
       }
