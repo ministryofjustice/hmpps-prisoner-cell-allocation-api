@@ -8,9 +8,11 @@ generic-service:
     host: prisoner-cell-allocation-api-preprod.prison.service.justice.gov.uk
 
   env:
-    APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
+    APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
+    OAUTH_ENDPOINT_URL: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
+    PRISON_ENDPOINT_URL: "https://api-preprod.prison.service.justice.gov.uk"
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
 generic-prometheus-alerts:
-  alertSeverity: digital-prison-service-dev
+  alertSeverity: digital-prison-service-preprod
