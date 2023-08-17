@@ -3,7 +3,7 @@
 
 generic-service:
   ingress:
-    host: prisoner-cell-allocation-api.prison.service.justice.gov.uk
+    host: cell-allocation-api.prison.service.justice.gov.uk
 
   env:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
