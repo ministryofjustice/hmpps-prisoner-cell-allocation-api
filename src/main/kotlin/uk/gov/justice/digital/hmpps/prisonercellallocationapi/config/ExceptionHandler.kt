@@ -74,8 +74,8 @@ class ExceptionHandler {
     return ResponseEntity.status(UNAUTHORIZED)
       .body(
         ErrorResponse(
-          status = INTERNAL_SERVER_ERROR,
-          userMessage = "Unexpected error: ${e.message}",
+          status = UNAUTHORIZED,
+          userMessage = "Error: ${e.message}",
           developerMessage = e.message,
         ),
       )
