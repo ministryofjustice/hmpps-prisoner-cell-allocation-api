@@ -50,10 +50,14 @@ abstract class IntegrationTestBase {
   internal fun <S : WebTestClient.RequestHeadersSpec<S>?> WebTestClient.RequestHeadersSpec<S>.withBearerToken(token: String) =
     this.apply { header(HttpHeaders.AUTHORIZATION, token) }
 
-  internal fun setAuthorisation(
+  internal fun setAuthorisationWithUser(
     roles: List<String> = listOf(),
     scopes: List<String> = listOf(),
   ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation("prisoner-cell-allocation-api-user", roles, scopes)
+  internal fun setAuthorisationWithoutUser(
+    roles: List<String> = listOf(),
+    scopes: List<String> = listOf(),
+  ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(roles, scopes)
 
   internal fun getAuthorisation(
     roles: List<String> = listOf(),

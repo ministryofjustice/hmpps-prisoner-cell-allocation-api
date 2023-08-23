@@ -31,8 +31,20 @@ class JwtAuthHelper() {
     roles: List<String> = listOf(),
     scopes: List<String> = listOf(),
   ): (HttpHeaders) -> Unit {
-    val token = createJwt(
+    val token = createJwtWithUser(
       subject = user,
+      scope = scopes,
+      expiryTime = Duration.ofHours(1L),
+      roles = roles,
+    )
+    return { it.set(HttpHeaders.AUTHORIZATION, "Bearer $token") }
+  }
+  fun setAuthorisation(
+    roles: List<String> = listOf(),
+    scopes: List<String> = listOf(),
+  ): (HttpHeaders) -> Unit {
+    val token = createJwtWithoutUser(
+      subject = "subject",
       scope = scopes,
       expiryTime = Duration.ofHours(1L),
       roles = roles,
@@ -45,7 +57,7 @@ class JwtAuthHelper() {
     roles: List<String> = listOf(),
     scopes: List<String> = listOf(),
   ): String {
-    val token = createJwt(
+    val token = createJwtWithUser(
       subject = user,
       scope = scopes,
       expiryTime = Duration.ofHours(1L),
@@ -54,7 +66,7 @@ class JwtAuthHelper() {
     return "Bearer $token"
   }
 
-  internal fun createJwt(
+  internal fun createJwtWithUser(
     subject: String?,
     scope: List<String>? = listOf(),
     roles: List<String>? = listOf(),
@@ -63,6 +75,26 @@ class JwtAuthHelper() {
   ): String =
     mutableMapOf<String, Any>()
       .also { subject?.let { subject -> it["user_name"] = subject } }
+      .also { it["client_id"] = "court-reg-client" }
+      .also { roles?.let { roles -> it["authorities"] = roles } }
+      .also { scope?.let { scope -> it["scope"] = scope } }
+      .let {
+        Jwts.builder()
+          .setId(jwtId)
+          .setSubject(subject)
+          .addClaims(it.toMap())
+          .setExpiration(Date(System.currentTimeMillis() + expiryTime.toMillis()))
+          .signWith(keyPair.private, SignatureAlgorithm.RS256)
+          .compact()
+      }
+  internal fun createJwtWithoutUser(
+    subject: String?,
+    scope: List<String>? = listOf(),
+    roles: List<String>? = listOf(),
+    expiryTime: Duration = Duration.ofHours(1),
+    jwtId: String = UUID.randomUUID().toString(),
+  ): String =
+    mutableMapOf<String, Any>()
       .also { it["client_id"] = "court-reg-client" }
       .also { roles?.let { roles -> it["authorities"] = roles } }
       .also { scope?.let { scope -> it["scope"] = scope } }

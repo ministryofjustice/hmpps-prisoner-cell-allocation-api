@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -57,6 +58,23 @@ class ExceptionHandler {
       .body(
         ErrorResponse(
           status = e.response,
+          userMessage = "Unexpected error: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(UnauthorizedException::class)
+  fun handleClientErrorException(e: UnauthorizedException): ResponseEntity<ErrorResponse?>? {
+    log.warn(
+      "Unauthorized exception: message {} ",
+      e.message,
+      e,
+    )
+    return ResponseEntity.status(UNAUTHORIZED)
+      .body(
+        ErrorResponse(
+          status = INTERNAL_SERVER_ERROR,
           userMessage = "Unexpected error: ${e.message}",
           developerMessage = e.message,
         ),

@@ -15,7 +15,7 @@ class CellMoveResourceTest : IntegrationTestBase() {
       .put()
       .uri("/api/bookings/988507/move-to-cell-swap")
       .headers(
-        setAuthorisation(
+        setAuthorisationWithUser(
           roles = listOf("ROLE_VIEW_ARRIVALS"),
           scopes = listOf("read", "write"),
         ),
@@ -43,7 +43,7 @@ class CellMoveResourceTest : IntegrationTestBase() {
       .put()
       .uri("/api/bookings/988507/move-to-cell-swap")
       .headers(
-        setAuthorisation(
+        setAuthorisationWithUser(
           roles = listOf("ROLE_VIEW_ARRIVALS"),
           scopes = listOf("read", "write"),
         ),
@@ -70,7 +70,25 @@ class CellMoveResourceTest : IntegrationTestBase() {
       .put()
       .uri("/api/bookings/988507/move-to-cell-swap")
       .headers(
-        setAuthorisation(
+        setAuthorisationWithUser(
+          roles = listOf("ROLE_VIEW_ARRIVALS"),
+          scopes = listOf("read"),
+        ),
+      )
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .bodyValue(MoveToCellSwapRequest("ADM", LocalDateTime.of(2023, 8, 1, 10, 0, 0)))
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `Unauthorized request due to lack of username `() {
+    prisonApiMockServer.stubMoveToCellSwapPositiveResponse(988507)
+    webTestClient
+      .put()
+      .uri("/api/bookings/988507/move-to-cell-swap")
+      .headers(
+        setAuthorisationWithoutUser(
           roles = listOf("ROLE_VIEW_ARRIVALS"),
           scopes = listOf("read"),
         ),

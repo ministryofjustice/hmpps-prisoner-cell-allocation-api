@@ -9,3 +9,7 @@ data class ClientException(
 data class NoBodyClientException(
   val response: Int,
 ) : RuntimeException()
+
+data class UnauthorizedException(
+  override val message: String,
+) : RuntimeException()
