@@ -65,14 +65,14 @@ class PrisonApiClientTest {
     inboundRequest.onRequestBegin { request ->
       log.append("Request: \n")
         .append("URI: ")
-        .append(request.getURI())
+        .append(request.uri)
         .append("\n")
         .append("Method: ")
-        .append(request.getMethod())
+        .append(request.method)
     }
     inboundRequest.onRequestHeaders { request ->
       log.append("\nHeaders:\n")
-      for (header in request.getHeaders()) {
+      for (header in request.headers) {
         log.append(
           """		${header.name} : ${header.value}
 """,
@@ -87,25 +87,25 @@ class PrisonApiClientTest {
     inboundRequest.onResponseBegin { response ->
       log.append("Response:\n")
         .append("Status: ")
-        .append(response.getStatus())
+        .append(response.status)
         .append("\n")
     }
     inboundRequest.onResponseHeaders { response ->
       log.append("Headers:\n")
-      for (header in response.getHeaders()) {
+      for (header in response.headers) {
         log.append(
           """${header.name} : ${header.value}""",
         )
       }
     }
-    inboundRequest.onResponseContent { response, content ->
+    inboundRequest.onResponseContent { _, content ->
       val bufferAsString: String = StandardCharsets.UTF_8.decode(content).toString()
       log.append("Response Body:\n$bufferAsString")
     }
 
     logger.info("HTTP ->\n")
-    inboundRequest.onRequestSuccess { request -> logger.info(log.toString()) }
-    inboundRequest.onResponseSuccess { response -> logger.info(log.toString()) }
+    inboundRequest.onRequestSuccess { logger.info(log.toString()) }
+    inboundRequest.onResponseSuccess { logger.info(log.toString()) }
     return inboundRequest
   }
 
