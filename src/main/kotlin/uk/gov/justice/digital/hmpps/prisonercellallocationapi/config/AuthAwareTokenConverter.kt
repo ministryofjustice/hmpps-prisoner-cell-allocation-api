@@ -53,6 +53,6 @@ class AuthAwareAuthenticationToken(
   }
 
   fun hasUserName(): Boolean {
-    return this.token.claims["user_name"] == null
+    return this.token.claims["user_name"] != null
   }
 }

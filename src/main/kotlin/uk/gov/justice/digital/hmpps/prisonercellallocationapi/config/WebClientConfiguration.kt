@@ -55,7 +55,7 @@ class WebClientConfiguration(
     ExchangeFilterFunction { request: ClientRequest, next: ExchangeFunction ->
       val token = when (val authentication = SecurityContextHolder.getContext().authentication) {
         is AuthAwareAuthenticationToken -> {
-          if (authentication.hasUserName()) {
+          if (!authentication.hasUserName()) {
             throw UnauthorizedException("User name not present")
           }
           authentication.token.tokenValue
