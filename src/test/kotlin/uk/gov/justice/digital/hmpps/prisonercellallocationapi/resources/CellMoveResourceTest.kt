@@ -83,7 +83,7 @@ class CellMoveResourceTest : IntegrationTestBase() {
 
   @Test
   fun `Unauthorized request due to lack of username `() {
-    // prisonApiMockServer.stubMoveToCellSwapPositiveResponse(988507)
+    prisonApiMockServer.stubMoveToCellSwapPositiveResponse(988507)
     webTestClient
       .put()
       .uri("/api/bookings/988507/move-to-cell-swap")
