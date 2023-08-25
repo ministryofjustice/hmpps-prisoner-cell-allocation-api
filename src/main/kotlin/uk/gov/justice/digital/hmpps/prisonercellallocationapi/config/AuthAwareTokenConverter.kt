@@ -16,6 +16,7 @@ class AuthAwareTokenConverter : Converter<Jwt, AbstractAuthenticationToken> {
     const val userName: String = "user_name"
     const val clientId: String = "client_id"
   }
+
   override fun convert(jwt: Jwt): AbstractAuthenticationToken {
     val claims = jwt.claims
     val principal = findPrincipal(claims)
@@ -49,5 +50,9 @@ class AuthAwareAuthenticationToken(
 ) : JwtAuthenticationToken(jwt, authorities) {
   override fun getPrincipal(): String {
     return aPrincipal
+  }
+
+  fun hasUserName(): Boolean {
+    return this.token.claims["user_name"] != null
   }
 }
