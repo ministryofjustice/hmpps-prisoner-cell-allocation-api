@@ -1,5 +1,3 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
-
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.4.0"
   kotlin("plugin.spring") version "1.9.10"
