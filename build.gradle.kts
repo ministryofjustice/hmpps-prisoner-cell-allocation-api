@@ -1,6 +1,8 @@
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
+
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.4.0"
-  kotlin("plugin.spring") version "1.9.0"
+  kotlin("plugin.spring") version "1.9.10"
 }
 
 val jsonwebtokenVersion by extra("0.11.5")
@@ -11,7 +13,7 @@ configurations {
 }
 
 dependencies {
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
   implementation("org.springframework.boot:spring-boot-starter-webflux:$springBootStarterOauth2Version")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:$springBootStarterOauth2Version")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client:$springBootStarterOauth2Version")
