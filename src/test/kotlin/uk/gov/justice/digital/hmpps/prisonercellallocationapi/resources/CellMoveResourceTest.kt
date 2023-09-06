@@ -98,4 +98,22 @@ class CellMoveResourceTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isUnauthorized
   }
+
+  @Test
+  fun `Forbidden request due to wrong group `() {
+    prisonApiMockServer.stubMoveToCellSwapPositiveResponse(988507)
+    webTestClient
+      .put()
+      .uri("/api/bookings/988507/move-to-cell-swap")
+      .headers(
+        setAuthorisationWithoutUser(
+          roles = listOf("ROLE_MAINTAIN_CELL_MOVEMENTS_X"),
+          scopes = listOf("read", "write"),
+        ),
+      )
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .bodyValue(MoveToCellSwapRequest("ADM", LocalDateTime.of(2023, 8, 1, 10, 0, 0)))
+      .exchange()
+      .expectStatus().isForbidden
+  }
 }
