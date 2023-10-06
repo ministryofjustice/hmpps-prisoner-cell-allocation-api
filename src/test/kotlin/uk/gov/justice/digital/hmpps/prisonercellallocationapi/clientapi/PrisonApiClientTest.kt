@@ -52,10 +52,8 @@ class PrisonApiClientTest {
         return enhance(request)
       }
     }
-    val webClient = WebClient.builder()
-      .baseUrl("http://localhost:${mockServer.port()}")
-      .clientConnector(JettyClientHttpConnector(httpClient))
-      .build()
+    val webClient = WebClient.builder().baseUrl("http://localhost:${mockServer.port()}")
+      .clientConnector(JettyClientHttpConnector(httpClient)).build()
 
     prisonApiClient = PrisonApiClient(webClient)
   }
@@ -63,11 +61,7 @@ class PrisonApiClientTest {
   private fun enhance(inboundRequest: Request): Request? {
     val log = StringBuilder()
     inboundRequest.onRequestBegin { request ->
-      log.append("Request: \n")
-        .append("URI: ")
-        .append(request.uri)
-        .append("\n")
-        .append("Method: ")
+      log.append("Request: \n").append("URI: ").append(request.uri).append("\n").append("Method: ")
         .append(request.method)
     }
     inboundRequest.onRequestHeaders { request ->
@@ -79,16 +73,13 @@ class PrisonApiClientTest {
         )
       }
     }
-    inboundRequest.onRequestContent { request, content ->
+    inboundRequest.onRequestContent { _, content ->
       val bufferAsString: String = StandardCharsets.UTF_8.decode(content).toString()
       log.append("Request Body:\n$bufferAsString")
     }
     log.append("\n")
     inboundRequest.onResponseBegin { response ->
-      log.append("Response:\n")
-        .append("Status: ")
-        .append(response.status)
-        .append("\n")
+      log.append("Response:\n").append("Status: ").append(response.status).append("\n")
     }
     inboundRequest.onResponseHeaders { response ->
       log.append("Headers:\n")
@@ -128,8 +119,7 @@ class PrisonApiClientTest {
 
     val response = prisonApiClient.moveToCellSwap(988507, requestBody)
 
-    assertThat(response)
-      .isEqualTo(cellMoveResponse)
+    assertThat(response).isEqualTo(cellMoveResponse)
 
     mockServer.verify(
       WireMock.putRequestedFor(WireMock.urlEqualTo("/api/bookings/988507/move-to-cell-swap")),
