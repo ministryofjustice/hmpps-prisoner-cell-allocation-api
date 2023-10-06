@@ -17,7 +17,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client:$springBootStarterOauth2Version")
 
   testImplementation("org.wiremock:wiremock-standalone:3.2.0")
-  testImplementation("org.eclipse.jetty:jetty-reactive-httpclient:4.0.0")
+  testImplementation("org.eclipse.jetty:jetty-reactive-httpclient:3.0.8")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("io.jsonwebtoken:jjwt-api:$jsonwebtokenVersion")
   testImplementation("io.jsonwebtoken:jjwt-impl:$jsonwebtokenVersion")
