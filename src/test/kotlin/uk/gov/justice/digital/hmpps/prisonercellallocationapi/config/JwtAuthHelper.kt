@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.config
 
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpHeaders
 import org.springframework.security.oauth2.jwt.JwtDecoder
@@ -80,11 +79,11 @@ class JwtAuthHelper() {
       .also { scope?.let { scope -> it["scope"] = scope } }
       .let {
         Jwts.builder()
-          .setId(jwtId)
-          .setSubject(subject)
-          .addClaims(it.toMap())
-          .setExpiration(Date(System.currentTimeMillis() + expiryTime.toMillis()))
-          .signWith(keyPair.private, SignatureAlgorithm.RS256)
+          .id(jwtId)
+          .subject(subject)
+          .claims(it.toMap())
+          .expiration(Date(System.currentTimeMillis() + expiryTime.toMillis()))
+          .signWith(keyPair.private)
           .compact()
       }
   internal fun createJwtWithoutUser(
@@ -100,11 +99,11 @@ class JwtAuthHelper() {
       .also { scope?.let { scope -> it["scope"] = scope } }
       .let {
         Jwts.builder()
-          .setId(jwtId)
-          .setSubject(subject)
-          .addClaims(it.toMap())
-          .setExpiration(Date(System.currentTimeMillis() + expiryTime.toMillis()))
-          .signWith(keyPair.private, SignatureAlgorithm.RS256)
+          .id(jwtId)
+          .subject(subject)
+          .claims(it.toMap())
+          .expiration(Date(System.currentTimeMillis() + expiryTime.toMillis()))
+          .signWith(keyPair.private)
           .compact()
       }
 }
