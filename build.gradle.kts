@@ -1,10 +1,10 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.5.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.7.0"
   kotlin("plugin.spring") version "1.9.10"
 }
 
-val jsonwebtokenVersion by extra("0.11.5")
-val springBootStarterOauth2Version by extra("3.1.4")
+val jsonwebtokenVersion by extra("0.12.3")
+val springBootStarterOauth2Version by extra("3.1.5")
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
