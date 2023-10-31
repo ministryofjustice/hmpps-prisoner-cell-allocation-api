@@ -25,7 +25,7 @@ data class MoveToCellRequest(
   var cellDescription: String,
 
   @Schema(
-    description = "The unique reference number for the person being assigned the cell",
+    description = "The unique prison number for the person being assigned the cell",
     example = "G7685GO",
   )
   var prisonerId: String,

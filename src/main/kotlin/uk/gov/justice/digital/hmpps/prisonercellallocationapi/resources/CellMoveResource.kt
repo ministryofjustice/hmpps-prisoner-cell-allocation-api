@@ -29,7 +29,7 @@ class CellMoveResource(
   @PreAuthorize("hasRole('ROLE_MAINTAIN_CELL_MOVEMENTS')")
   @Operation(
     summary = "Move the person temporarily out of cell",
-    description = "Move the person temporarily out of the cell",
+    description = "Move the person temporarily out of the cell. The role ROLE_MAINTAIN_CELL_MOVEMENTS is required to perform this operation.",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -78,7 +78,7 @@ class CellMoveResource(
   @PreAuthorize("hasRole('ROLE_MAINTAIN_CELL_MOVEMENTS')")
   @Operation(
     summary = "Move the person to the cell",
-    description = "Move the person to the cell",
+    description = "Move the person to the cell. The role ROLE_MAINTAIN_CELL_MOVEMENTS is required to perform this operation.",
     responses = [
       ApiResponse(
         responseCode = "200",

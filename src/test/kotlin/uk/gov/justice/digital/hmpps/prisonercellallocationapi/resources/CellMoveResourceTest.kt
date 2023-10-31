@@ -101,7 +101,7 @@ class CellMoveResourceTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Forbidden request due to wrong group `() {
+  fun `Forbidden request due to wrong role`() {
     prisonApiMockServer.stubMoveToCellSwapPositiveResponse(988507)
     webTestClient
       .put()
@@ -154,7 +154,7 @@ class CellMoveResourceTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `The person unsuccessfully moved into the cell due to wrong group `() {
+  fun `The person unsuccessfully moved into the cell due to wrong role`() {
     webTestClient
       .post()
       .uri("/api/move-to-cell")
