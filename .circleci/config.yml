@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@7
+  hmpps: ministryofjustice/hmpps@7.5.0
 
 parameters:
   alerts-slack-channel:
@@ -43,6 +43,13 @@ workflows:
               ignore: /.*/
       - hmpps/helm_lint:
           name: helm_lint
+      - hmpps/build_docker:
+          name: test_build_docker
+          publish: false
+          filters:
+            branches:
+              ignore:
+                - main
       - hmpps/build_multiplatform_docker:
           name: build_docker
           filters:
