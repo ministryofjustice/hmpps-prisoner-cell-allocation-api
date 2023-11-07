@@ -1,6 +1,7 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.7.0"
   kotlin("plugin.spring") version "1.9.10"
+  kotlin("plugin.jpa") version "1.9.0"
 }
 
 val jsonwebtokenVersion by extra("0.12.3")
@@ -12,9 +13,14 @@ configurations {
 
 dependencies {
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-webflux:$springBootStarterOauth2Version")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:$springBootStarterOauth2Version")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client:$springBootStarterOauth2Version")
+
+  runtimeOnly("org.flywaydb:flyway-core")
+  runtimeOnly("org.postgresql:postgresql:42.5.4")
+  testRuntimeOnly("com.h2database:h2:2.2.220")
 
   testImplementation("org.wiremock:wiremock-standalone:3.2.0")
   testImplementation("org.eclipse.jetty:jetty-reactive-httpclient:3.0.8")

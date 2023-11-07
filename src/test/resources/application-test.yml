@@ -10,6 +10,19 @@ spring:
     date-format: "yyyy-MM-dd HH:mm:ss"
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
+  datasource:
+    # This reopens the H2 database prepared by flyway with default schema and user pin_phone_monitor
+    url: 'jdbc:h2:mem:welcome-people-in-prison-db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS PRISON_CELL_ALLOCATION_API'
+    username: testUser
+    password: dummy
+    hikari:
+      schema: PRISON_CELL_ALLOCATION_API
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
 oauth:
   endpoint.url: http://localhost:8090/auth

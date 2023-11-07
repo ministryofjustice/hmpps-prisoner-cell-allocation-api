@@ -19,11 +19,13 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMove
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.CellMoveService
 
 @RestController
 @RequestMapping(value = ["/api/"], produces = ["application/json"])
 class CellMoveResource(
   private val prisonApiClient: PrisonApiClient,
+  private val cellMoveService: CellMoveService,
 ) {
 
   @PreAuthorize("hasRole('ROLE_MAINTAIN_CELL_MOVEMENTS')")
@@ -118,5 +120,5 @@ class CellMoveResource(
     @Valid
     @NotNull
     moveToCellRequest: MoveToCellRequest,
-  ): MoveToCellResponse = MoveToCellResponse(1)
+  ): MoveToCellResponse = cellMoveService.save(moveToCellRequest)
 }

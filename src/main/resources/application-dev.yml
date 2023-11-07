@@ -1,3 +1,6 @@
+server:
+  shutdown: immediate
+
 oauth:
   endpoint:
     url: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"

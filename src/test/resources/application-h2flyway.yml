@@ -1,0 +1,14 @@
+spring:
+
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration/postgres,classpath:/db/migration/common
+    baselineOnMigrate: true
+    schemas: ${spring.datasource.hikari.schema}
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    placeholders:
+      database_password: ${spring.datasource.password}
+
+  h2.console.enabled: true
