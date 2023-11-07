@@ -13,7 +13,7 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
 
-  hmpps-welcome-people-into-prison-api-db:
+  hmpps-prisoner-cell-allocation-api-db:
     image: postgres
     networks:
       - hmpps
