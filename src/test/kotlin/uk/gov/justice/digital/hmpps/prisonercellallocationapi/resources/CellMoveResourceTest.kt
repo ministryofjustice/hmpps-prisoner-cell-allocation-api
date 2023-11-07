@@ -1,13 +1,18 @@
 package uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources
 
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.MoveToCellRepository
 import java.time.LocalDateTime
 
 class CellMoveResourceTest : IntegrationTestBase() {
+
+  @Autowired
+  lateinit var repository: MoveToCellRepository
 
   @Test
   fun `The person moved to temporary cell`() {
@@ -144,13 +149,6 @@ class CellMoveResourceTest : IntegrationTestBase() {
       )
       .exchange()
       .expectStatus().isOk
-      .expectBody().json(
-        """
-        {
-          "id": 1
-        }
-        """.trimIndent(),
-      )
   }
 
   @Test

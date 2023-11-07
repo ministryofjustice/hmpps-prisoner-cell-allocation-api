@@ -9,23 +9,22 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.MoveToC
 
 @Service
 @Transactional
-class CellMoveService(
+class MoveToCellService(
   private val moveToCellRepository: MoveToCellRepository,
 ) {
   fun save(request: MoveToCellRequest): MoveToCellResponse {
     val moveToCell = moveToCellRepository.save(
-            MoveToCell(
-                    agency = request.agency,
-                    cellId = request.cellId,
-                    cellDescription = request.cellDescription,
-                    prisonerId = request.prisonerId,
-                    prisonerName = request.prisonerName,
-                    userId = request.userId,
-                    dateTime = request.dateTime,
-                    reason = request.reason,
-            ),
+      MoveToCell(
+        agency = request.agency,
+        cellId = request.cellId,
+        cellDescription = request.cellDescription,
+        prisonerId = request.prisonerId,
+        prisonerName = request.prisonerName,
+        userId = request.userId,
+        dateTime = request.dateTime,
+        reason = request.reason,
+      ),
     )
     return MoveToCellResponse(moveToCell.id!!)
   }
-
 }
