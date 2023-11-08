@@ -16,7 +16,7 @@ class CellMovementServiceTest {
   private val cellMovementService = CellMovementService(cellMovementRepository)
 
   @Test
-  fun `Create move to cell record`() {
+  fun `Create cell movement record`() {
     val request = CellMovementRequest(
       agency = "Agency",
       cellId = 1,
