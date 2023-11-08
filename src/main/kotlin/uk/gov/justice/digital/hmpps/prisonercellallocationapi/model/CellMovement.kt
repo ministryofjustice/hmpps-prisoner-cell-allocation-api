@@ -8,14 +8,14 @@ import jakarta.persistence.Table
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "move_to_cell")
-data class MoveToCell(
+@Table(name = "cell_movement")
+data class CellMovement(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   val id: Long? = null,
   val agency: String,
-  val cellId: Long,
-  val cellDescription: String,
+  val cellId: Long? = null,
+  val cellDescription: String? = null,
   val prisonerId: String,
   val prisonerName: String,
   val userId: String,

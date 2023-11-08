@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.clientapi.PrisonApiClient
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMoveResponse
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellRequest
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.MoveToCellService
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.CellMovementService
 
 @RestController
 @RequestMapping(value = ["/api/"], produces = ["application/json"])
-class CellMoveResource(
+class CellMovementResource(
   private val prisonApiClient: PrisonApiClient,
-  private val cellMoveService: MoveToCellService,
+  private val cellMovementService: CellMovementService,
 ) {
 
   @PreAuthorize("hasRole('ROLE_MAINTAIN_CELL_MOVEMENTS')")
@@ -119,6 +119,6 @@ class CellMoveResource(
     @RequestBody
     @Valid
     @NotNull
-    moveToCellRequest: MoveToCellRequest,
-  ): MoveToCellResponse = cellMoveService.save(moveToCellRequest)
+    cellMovementRequest: CellMovementRequest,
+  ): CellMovementResponse = cellMovementService.save(cellMovementRequest)
 }
