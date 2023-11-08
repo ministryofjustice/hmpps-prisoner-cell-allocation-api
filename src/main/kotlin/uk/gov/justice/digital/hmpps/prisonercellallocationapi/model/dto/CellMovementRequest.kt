@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class MoveToCellRequest(
+data class CellMovementRequest(
 
   @Schema(
     description = "The establishment",

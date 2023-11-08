@@ -13,5 +13,18 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
 
+  hmpps-prisoner-cell-allocation-api-db:
+    image: postgres
+    networks:
+      - hmpps
+    container_name: hmpps-prisoner-cell-allocation-api-db
+    restart: always
+    ports:
+      - "5431:5432"
+    environment:
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_USER=test
+      - POSTGRES_DB=hmpps-prisoner-cell-allocation-api-db
+
 networks:
   hmpps:

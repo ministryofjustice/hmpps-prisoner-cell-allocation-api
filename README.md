@@ -4,8 +4,11 @@
 This service provides:
 * Cell allocation functionality
 
-# Starting the service
-Run the `App.kt` main method with `dev` set in configurations > Spring boot configurations > active profile.
+# Starting the service locally
+```docker-compose up``` will bring local database up. 
+
+Setup environment variables in your IDE following docker-compose.yml ```SPRING_DATASOURCE_USERNAME=test;SPRING_DATASOURCE_PASSWORD=test;DATABASE_NAME=hmpps-prisoner-cell-allocation-api-db;DATABASE_ENDPOINT=localhost:5431```
+Run the `App.kt` main method with `dev` profile.
 
 
 Ensure that IntelliJ is configured to run and build the project using gradle rather than it's own build tool.

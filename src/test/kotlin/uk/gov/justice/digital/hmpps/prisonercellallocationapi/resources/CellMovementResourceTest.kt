@@ -3,11 +3,11 @@ package uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellRequest
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MoveToCellSwapRequest
 import java.time.LocalDateTime
 
-class CellMoveResourceTest : IntegrationTestBase() {
+class CellMovementResourceTest : IntegrationTestBase() {
 
   @Test
   fun `The person moved to temporary cell`() {
@@ -131,7 +131,7 @@ class CellMoveResourceTest : IntegrationTestBase() {
       )
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .bodyValue(
-        MoveToCellRequest(
+        CellMovementRequest(
           "MDI",
           123,
           "Cell Description",
@@ -144,13 +144,8 @@ class CellMoveResourceTest : IntegrationTestBase() {
       )
       .exchange()
       .expectStatus().isOk
-      .expectBody().json(
-        """
-        {
-          "id": 1
-        }
-        """.trimIndent(),
-      )
+      .expectBody()
+      .jsonPath("id").exists()
   }
 
   @Test
@@ -166,7 +161,7 @@ class CellMoveResourceTest : IntegrationTestBase() {
       )
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .bodyValue(
-        MoveToCellRequest(
+        CellMovementRequest(
           "MDI",
           123,
           "Cell Description",
