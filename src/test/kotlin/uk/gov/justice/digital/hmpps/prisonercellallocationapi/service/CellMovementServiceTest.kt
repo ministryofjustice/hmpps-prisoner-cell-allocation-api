@@ -7,7 +7,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.MoveType
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
 import java.time.LocalDateTime
@@ -39,7 +39,7 @@ class CellMovementServiceTest {
         userId = request.userId,
         dateTime = request.dateTime,
         reason = request.reason,
-        moveType = MoveType.IN,
+        direction = Direction.IN,
 
       ),
     )
@@ -56,7 +56,7 @@ class CellMovementServiceTest {
         userId = request.userId,
         dateTime = request.dateTime,
         reason = request.reason,
-        moveType = MoveType.IN,
+        direction = Direction.IN,
       ),
     )
     assertThat(result.id).isEqualTo(1)
@@ -85,7 +85,7 @@ class CellMovementServiceTest {
         userId = request.userId,
         dateTime = request.dateTime,
         reason = request.reason,
-        moveType = MoveType.OUT,
+        direction = Direction.OUT,
 
       ),
     )
@@ -102,7 +102,7 @@ class CellMovementServiceTest {
         userId = request.userId,
         dateTime = request.dateTime,
         reason = request.reason,
-        moveType = MoveType.OUT,
+        direction = Direction.OUT,
       ),
     )
     assertThat(result.id).isEqualTo(1)

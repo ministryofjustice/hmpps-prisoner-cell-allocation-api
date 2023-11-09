@@ -24,9 +24,9 @@ data class CellMovement(
   val dateTime: LocalDateTime,
   val reason: String,
   @Enumerated(EnumType.STRING)
-  val moveType: MoveType,
+  val direction: Direction,
 )
 
-enum class MoveType {
+enum class Direction {
   IN, OUT
 }
