@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.transaction.TestTransaction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import java.time.LocalDateTime
 
 class MoveToCellRepositoryTest : RepositoryTest() {
@@ -19,7 +20,7 @@ class MoveToCellRepositoryTest : RepositoryTest() {
 
   @Test
   fun `move to cell`() {
-    val cellMovementRecord = createCellMovementRecord(cellIncluded = true)
+    val cellMovementRecord = createCellMovementRecord(Direction.IN)
 
     val persistedCellMovementRecord = repository.save(cellMovementRecord)
     TestTransaction.flagForCommit()
@@ -30,7 +31,7 @@ class MoveToCellRepositoryTest : RepositoryTest() {
 
   @Test
   fun `move out from cell`() {
-    val cellMovementRecord = createCellMovementRecord(cellIncluded = false)
+    val cellMovementRecord = createCellMovementRecord(Direction.OUT)
 
     val persistedCellMovementRecord = repository.save(cellMovementRecord)
     TestTransaction.flagForCommit()
@@ -39,15 +40,16 @@ class MoveToCellRepositoryTest : RepositoryTest() {
     assertThat(persistedCellMovementRecord.id).isNotNull
   }
 
-  fun createCellMovementRecord(cellIncluded: Boolean) = CellMovement(
+  fun createCellMovementRecord(direction: Direction) = CellMovement(
     id = null,
     agency = "Agency",
-    cellId = if (cellIncluded) 1234 else null,
-    cellDescription = if (cellIncluded) "Cell Desc" else null,
+    cellId = 1234,
+    cellDescription = "Cell Desc",
     prisonerId = " prisoner Id",
     prisonerName = "Adam Walker",
     userId = "user Id",
     dateTime = LocalDateTime.now(),
     reason = "Reason",
+    direction = direction,
   )
 }

@@ -79,8 +79,8 @@ class CellMovementResource(
 
   @PreAuthorize("hasRole('ROLE_MAINTAIN_CELL_MOVEMENTS')")
   @Operation(
-    summary = "Move the person to the cell",
-    description = "Move the person to the cell. The role ROLE_MAINTAIN_CELL_MOVEMENTS is required to perform this operation.",
+    summary = "Move the person into the cell",
+    description = "Move the person into the cell. The role ROLE_MAINTAIN_CELL_MOVEMENTS is required to perform this operation.",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -114,11 +114,56 @@ class CellMovementResource(
       ),
     ],
   )
-  @PostMapping(path = ["/move-to-cell"])
-  fun moveToCell(
+  @PostMapping(path = ["/cell/move-in"])
+  fun moveIntoCell(
     @RequestBody
     @Valid
     @NotNull
     cellMovementRequest: CellMovementRequest,
-  ): CellMovementResponse = cellMovementService.save(cellMovementRequest)
+  ): CellMovementResponse = cellMovementService.moveIn(cellMovementRequest)
+
+  @PreAuthorize("hasRole('ROLE_MAINTAIN_CELL_MOVEMENTS')")
+  @Operation(
+    summary = "Move the person out from the cell",
+    description = "Move the person out from the cell. The role ROLE_MAINTAIN_CELL_MOVEMENTS is required to perform this operation.",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Move accepted",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = CellMoveResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Incorrect permissions to retrieve",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+    ],
+  )
+  @PostMapping(path = ["/cell/move-out"])
+  fun moveOutCell(
+    @RequestBody
+    @Valid
+    @NotNull
+    cellMovementRequest: CellMovementRequest,
+  ): CellMovementResponse = cellMovementService.moveOut(cellMovementRequest)
 }

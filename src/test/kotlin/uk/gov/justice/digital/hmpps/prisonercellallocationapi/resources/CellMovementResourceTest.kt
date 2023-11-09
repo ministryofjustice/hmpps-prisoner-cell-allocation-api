@@ -122,7 +122,7 @@ class CellMovementResourceTest : IntegrationTestBase() {
   fun `The person successfully moved into the cell`() {
     webTestClient
       .post()
-      .uri("/api/move-to-cell")
+      .uri("/api/cell/move-in")
       .headers(
         setAuthorisationWithUser(
           roles = listOf("ROLE_MAINTAIN_CELL_MOVEMENTS"),
@@ -152,7 +152,64 @@ class CellMovementResourceTest : IntegrationTestBase() {
   fun `The person unsuccessfully moved into the cell due to wrong role`() {
     webTestClient
       .post()
-      .uri("/api/move-to-cell")
+      .uri("/api/cell/move-in")
+      .headers(
+        setAuthorisationWithoutUser(
+          roles = listOf("ROLE_MAINTAIN_CELL_MOVEMENTS_X"),
+          scopes = listOf("read", "write"),
+        ),
+      )
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .bodyValue(
+        CellMovementRequest(
+          "MDI",
+          123,
+          "Cell Description",
+          "G7570GE",
+          "Batz Jerel",
+          "guardian id",
+          LocalDateTime.of(2023, 8, 1, 10, 0, 0),
+          "Reason",
+        ),
+      ).exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  fun `The person successfully moved out from the cell`() {
+    val result = webTestClient
+      .post()
+      .uri("/api/cell/move-out")
+      .headers(
+        setAuthorisationWithUser(
+          roles = listOf("ROLE_MAINTAIN_CELL_MOVEMENTS"),
+          scopes = listOf("read", "write"),
+        ),
+      )
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .bodyValue(
+        CellMovementRequest(
+          "MDI",
+          123,
+          "Cell Description",
+          "G7570GE",
+          "Batz Jerel",
+          "guardian id",
+          LocalDateTime.of(2023, 8, 1, 10, 0, 0),
+          "Reason",
+        ),
+      )
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("id").exists()
+  }
+
+  @Test
+  fun `The person unsuccessfully moved out from the cell due to wrong role`() {
+    webTestClient
+      .post()
+      .uri("/api/cell/move-out")
       .headers(
         setAuthorisationWithoutUser(
           roles = listOf("ROLE_MAINTAIN_CELL_MOVEMENTS_X"),
