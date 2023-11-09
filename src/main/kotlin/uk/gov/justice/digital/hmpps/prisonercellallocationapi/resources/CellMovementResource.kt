@@ -79,8 +79,8 @@ class CellMovementResource(
 
   @PreAuthorize("hasRole('ROLE_MAINTAIN_CELL_MOVEMENTS')")
   @Operation(
-    summary = "Move the person in to the cell",
-    description = "Move the person in to the cell. The role ROLE_MAINTAIN_CELL_MOVEMENTS is required to perform this operation.",
+    summary = "Move the person into the cell",
+    description = "Move the person into the cell. The role ROLE_MAINTAIN_CELL_MOVEMENTS is required to perform this operation.",
     responses = [
       ApiResponse(
         responseCode = "200",
