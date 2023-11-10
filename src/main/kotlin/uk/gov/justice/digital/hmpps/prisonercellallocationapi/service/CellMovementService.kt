@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.prisonercellallocationapi.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ClientException
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
@@ -42,10 +43,10 @@ class CellMovementService(
   )
 
   fun findByPrisonerId(request: PrisonerSearchRequest): PrisonerSearchResponse {
-    val lastMovement = cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDesc(request.prisonerId)
+    val lastMovement = cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc(request.prisonerId)
 
     return if (lastMovement.isEmpty || lastMovement.get().direction == Direction.OUT) {
-      throw RuntimeException("No current cell allocation found for given prisoner id")
+      throw ClientException(404, "Prisoner has no cell allocation", "No current cell allocation found for given prisoner id")
     } else {
       val lm = lastMovement.get()
       PrisonerSearchResponse(

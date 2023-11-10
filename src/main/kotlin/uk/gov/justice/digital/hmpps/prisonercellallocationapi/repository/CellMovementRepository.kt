@@ -8,5 +8,5 @@ import java.util.*
 @Repository
 interface CellMovementRepository : JpaRepository<CellMovement, Long> {
 
-  fun findFirstByPrisonerIdOrderByDateTimeDesc(prisonerId: String): Optional<CellMovement>
+  fun findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId: String): Optional<CellMovement>
 }

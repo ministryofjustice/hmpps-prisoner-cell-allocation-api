@@ -127,13 +127,13 @@ class CellMovementServiceTest {
       reason = "Reason",
       direction = Direction.IN,
     )
-    whenever(cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDesc(any())).thenReturn(
+    whenever(cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc(any())).thenReturn(
       Optional.of(lastMovement),
     )
 
     val result = cellMovementService.findByPrisonerId(request)
 
-    verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDesc(prisonerId)
+    verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId)
 
     assertPrisonerSearchResponse(
       PrisonerSearchResponse(
@@ -164,7 +164,7 @@ class CellMovementServiceTest {
       reason = "Reason",
       direction = Direction.OUT,
     )
-    whenever(cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDesc(any())).thenReturn(
+    whenever(cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc(any())).thenReturn(
       Optional.of(lastMovement),
     )
 
@@ -172,7 +172,7 @@ class CellMovementServiceTest {
       cellMovementService.findByPrisonerId(request)
     }
 
-    verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDesc(prisonerId)
+    verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId)
   }
 
   private fun assertPrisonerSearchResponse(expected: PrisonerSearchResponse, actual: PrisonerSearchResponse) {
