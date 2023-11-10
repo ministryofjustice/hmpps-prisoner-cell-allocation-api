@@ -44,8 +44,7 @@ class CellMovementServiceTest {
         dateTime = request.dateTime,
         reason = request.reason,
         direction = Direction.IN,
-
-        ),
+      ),
     )
     val result = cellMovementService.moveIn(request)
 
@@ -90,8 +89,7 @@ class CellMovementServiceTest {
         dateTime = request.dateTime,
         reason = request.reason,
         direction = Direction.OUT,
-
-        ),
+      ),
     )
     val result = cellMovementService.moveOut(request)
 
@@ -114,7 +112,6 @@ class CellMovementServiceTest {
 
   @Test
   fun `Find currently housed prisoner`() {
-
     val prisonerId = "12345"
     val request = PrisonerSearchRequest(prisonerId)
 
@@ -152,7 +149,6 @@ class CellMovementServiceTest {
 
   @Test
   fun `Find released prisoner`() {
-
     val prisonerId = "12345"
     val request = PrisonerSearchRequest(prisonerId)
 
@@ -177,9 +173,7 @@ class CellMovementServiceTest {
     }
 
     verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDesc(prisonerId)
-
   }
-
 
   private fun assertPrisonerSearchResponse(expected: PrisonerSearchResponse, actual: PrisonerSearchResponse) {
     assertThat(actual.id).isEqualTo(expected.id)
