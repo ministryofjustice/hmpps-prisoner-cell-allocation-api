@@ -24,7 +24,7 @@ class PrisonerLocationResource(
   @PreAuthorize("hasRole('ROLE_VIEW_CELL_MOVEMENTS')")
   @Operation(
     summary = "View current cell for a given prisoner ID",
-    description = "Move the person to the cell. The role ROLE_VIEW_CELL_MOVEMENTS is required to perform this operation.",
+    description = "Display the current cell of a resident prisoner. The role ROLE_VIEW_CELL_MOVEMENTS is required to perform this operation.",
     responses = [
       ApiResponse(
         responseCode = "200",
