@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ErrorResponse
@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.Prisoner
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.CellMovementService
 
 @RestController
-@RequestMapping(value = ["/api/"], produces = ["application/json"])
+@RequestMapping(value = ["/api/prisoner/"], produces = ["application/json"])
 class PrisonerLocationResource(
   private val cellMovementService: CellMovementService,
 ) {
@@ -63,11 +63,11 @@ class PrisonerLocationResource(
       ),
     ],
   )
-  @PostMapping(path = ["/current-cell"])
+  @GetMapping(path = ["{prisonerId}/current-cell"])
   fun getCurrentCell(
-    @RequestBody
+    @PathVariable
     @Valid
     @NotNull
-    prisonerSearchRequest: PrisonerSearchRequest,
-  ): PrisonerSearchResponse = cellMovementService.findByPrisonerId(prisonerSearchRequest)
+    prisonerId: String,
+  ): PrisonerSearchResponse = cellMovementService.findByPrisonerId(PrisonerSearchRequest(prisonerId))
 }
