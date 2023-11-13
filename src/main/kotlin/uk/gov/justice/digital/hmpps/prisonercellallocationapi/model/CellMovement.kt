@@ -15,16 +15,16 @@ data class CellMovement(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   val id: Long? = null,
-  val agency: String? = null,
-  val cellId: Long? = null,
-  val cellDescription: String? = null,
-  val prisonerId: String? = null,
-  val prisonerName: String? = null,
-  val userId: String? = null,
-  val dateTime: LocalDateTime? = null,
-  val reason: String? = null,
+  val agency: String,
+  val cellId: Long,
+  val cellDescription: String,
+  val prisonerId: String,
+  val prisonerName: String,
+  val userId: String,
+  val dateTime: LocalDateTime,
+  val reason: String,
   @Enumerated(EnumType.STRING)
-  val direction: Direction? = null,
+  val direction: Direction,
 )
 
 enum class Direction {

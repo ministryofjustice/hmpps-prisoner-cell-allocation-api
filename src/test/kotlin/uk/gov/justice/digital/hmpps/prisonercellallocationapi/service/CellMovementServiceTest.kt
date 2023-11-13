@@ -138,10 +138,10 @@ class CellMovementServiceTest {
     assertPrisonerSearchResponse(
       PrisonerSearchResponse(
         lastMovement.id!!,
-        lastMovement.prisonerId!!,
-        lastMovement.prisonerName!!,
-        lastMovement.cellId!!,
-        lastMovement.cellDescription!!,
+        lastMovement.prisonerId,
+        lastMovement.prisonerName,
+        lastMovement.cellId,
+        lastMovement.cellDescription,
       ),
       result,
     )
