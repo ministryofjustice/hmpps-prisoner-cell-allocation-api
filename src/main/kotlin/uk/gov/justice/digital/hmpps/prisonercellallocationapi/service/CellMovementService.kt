@@ -2,10 +2,13 @@ package uk.gov.justice.digital.hmpps.prisonercellallocationapi.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ClientException
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
 
 @Service
@@ -38,4 +41,21 @@ class CellMovementService(
     reason = request.reason,
     direction = direction,
   )
+
+  fun findByPrisonerId(request: PrisonerSearchRequest): PrisonerSearchResponse {
+    val lastMovement = cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc(request.prisonerId)
+
+    return if (lastMovement.isEmpty || lastMovement.get().direction == Direction.OUT) {
+      throw ClientException(404, "Prisoner has no cell allocation", "No current cell allocation found for given prisoner id")
+    } else {
+      val lm = lastMovement.get()
+      PrisonerSearchResponse(
+        id = lm.id!!,
+        cellDescription = lm.cellDescription!!,
+        cellId = lm.cellId!!,
+        prisonerId = lm.prisonerId!!,
+        prisonerName = lm.prisonerName!!,
+      )
+    }
+  }
 }
