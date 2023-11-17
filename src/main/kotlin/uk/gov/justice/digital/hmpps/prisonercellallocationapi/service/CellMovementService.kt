@@ -65,14 +65,8 @@ class CellMovementService(
   }
 
   fun getOccupancy(cellId: Long): List<PrisonerResponse> {
-    val list = cellMovementRepository.findAllByCellIdOrderByDateTimeDescIdDesc(cellId)
 
-    val map = list.groupBy({ it.prisonerId }, { it })
-      .filterValues { it.first().direction == Direction.IN }
-
-    return map.filter {
-      cellMovementRepository.findAllByPrisonerIdAndIdGreaterThan(it.key, it.value.first().id!!).isEmpty()
-    }
-      .map { PrisonerResponse(it.key) }
+    val list = cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(cellId)
+    return list.map { PrisonerResponse(it.prisonerId) }
   }
 }
