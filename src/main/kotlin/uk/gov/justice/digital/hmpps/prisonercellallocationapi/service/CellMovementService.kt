@@ -6,6 +6,12 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementResponse
+<<<<<<< Updated upstream
+=======
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
+>>>>>>> Stashed changes
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
 
 @Service
@@ -38,4 +44,40 @@ class CellMovementService(
     reason = request.reason,
     direction = direction,
   )
+<<<<<<< Updated upstream
+=======
+
+  fun findByPrisonerId(request: PrisonerSearchRequest): PrisonerSearchResponse {
+    val lastMovement = cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc(request.prisonerId)
+
+    return if (lastMovement.isEmpty || lastMovement.get().direction == Direction.OUT) {
+      throw ClientException(
+        404,
+        "Prisoner has no cell allocation",
+        "No current cell allocation found for given prisoner id",
+      )
+    } else {
+      val lm = lastMovement.get()
+      PrisonerSearchResponse(
+        id = lm.id!!,
+        cellDescription = lm.cellDescription!!,
+        cellId = lm.cellId!!,
+        prisonerId = lm.prisonerId!!,
+        prisonerName = lm.prisonerName!!,
+      )
+    }
+  }
+
+  fun getOccupancy(cellId: Long): List<PrisonerResponse> {
+    val list = cellMovementRepository.findAllByCellIdOrderByDateTimeDescIdDesc(cellId)
+
+    val map = list.groupBy({ it.prisonerId }, { it })
+      .filterValues { it.first().direction == Direction.IN }
+
+    return map.filter {
+      cellMovementRepository.findAllByPrisonerIdAndIdGreaterThan(it.key, it.value.first().id!!).isEmpty()
+    }
+      .map { PrisonerResponse(it.key) }
+  }
+>>>>>>> Stashed changes
 }
