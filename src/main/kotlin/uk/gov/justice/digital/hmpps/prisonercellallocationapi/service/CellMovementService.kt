@@ -65,7 +65,6 @@ class CellMovementService(
   }
 
   fun getOccupancy(cellId: Long): List<PrisonerResponse> {
-
     val list = cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(cellId)
     return list.map { PrisonerResponse(it.prisonerId) }
   }

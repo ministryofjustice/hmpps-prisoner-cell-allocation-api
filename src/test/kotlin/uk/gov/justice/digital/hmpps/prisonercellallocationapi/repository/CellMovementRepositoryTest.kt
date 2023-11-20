@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository
 
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.util.Lists
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,8 +9,6 @@ import org.springframework.test.context.transaction.TestTransaction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import java.time.LocalDateTime
-import java.util.Collections
-import java.util.Collections.emptyList
 
 class CellMovementRepositoryTest : RepositoryTest() {
   @Autowired
@@ -64,26 +61,11 @@ class CellMovementRepositoryTest : RepositoryTest() {
   }
 
   @Test
-  @Sql("classpath:repository/vacated-prisoner-multiple-residences.sql")
-  fun `find all by prisoner id and id greater order by dateTime desc and id desc`() {
-    val result = repository.findAllByPrisonerIdAndIdGreaterThan("LEFT-2", 49)
-    assertThat(result).isEqualTo(
-      listOf(
-        CellMovement(
-          410, "LII", 1, "LII-CELL-A", "LEFT-2", "Former Prisoner", "USER1",
-          LocalDateTime.of(2021, 1, 4, 1, 1, 1), "Test data", Direction.OUT,
-        ),
-      ),
-    )
-  }
-
-  @Test
   @Sql("classpath:repository/vacated-prisoner-one-residence.sql")
   fun `find cell occupancy with a vacated prisoner returns empty list`() {
     val result = repository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(1)
     assertThat(result).isEmpty()
   }
-
 
   fun createCellMovementRecord(direction: Direction) = CellMovement(
     id = null,

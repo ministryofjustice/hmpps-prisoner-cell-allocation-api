@@ -152,18 +152,6 @@ class CellMovementServiceTest {
   fun `Get cell occupancy`() {
     val repoResults = listOf(
       CellMovement(
-        4,
-        "LLI",
-        1,
-        "CELL-1-1",
-        "D1234",
-        "John Smith",
-        "USER1",
-        LocalDateTime.of(2023, 11, 16, 12, 0),
-        "Release",
-        Direction.OUT,
-      ),
-      CellMovement(
         3,
         "LLI",
         1,
@@ -189,59 +177,16 @@ class CellMovementServiceTest {
         Direction.IN,
       ),
     )
-    whenever(cellMovementRepository.findAllByCellIdOrderByDateTimeDescIdDesc(any())).thenReturn(repoResults)
-    whenever(cellMovementRepository.findAllByPrisonerIdAndIdGreaterThan(any(), any())).thenReturn(listOf())
-
+    whenever(cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(any())).thenReturn(repoResults)
     val result = cellMovementService.getOccupancy(1)
 
-    assertThat(result.size).isEqualTo(1)
+    assertThat(result.size).isEqualTo(2)
   }
 
   @Test
-  fun `Get cell occupancy when move out data are missed`() {
-    val cellRepoResults = listOf(
-      CellMovement(
-        4,
-        "LLI",
-        1,
-        "CELL-1-1",
-        "D1234",
-        "John Smith",
-        "USER1",
-        LocalDateTime.of(2023, 11, 16, 12, 0),
-        "In",
-        Direction.IN,
-      ),
-    )
-    val prisonerRepoResults = listOf(
-      CellMovement(
-        4,
-        "LLI",
-        2,
-        "CELL-1-2",
-        "D1234",
-        "John Smith",
-        "USER1",
-        LocalDateTime.of(2023, 11, 17, 12, 0),
-        "In",
-        Direction.IN,
-      ),
-    )
-    whenever(cellMovementRepository.findAllByCellIdOrderByDateTimeDescIdDesc(any())).thenReturn(cellRepoResults)
-    whenever(cellMovementRepository.findAllByPrisonerIdAndIdGreaterThan(any(), any())).thenReturn(prisonerRepoResults)
-
+  fun `Get cell occupancy when result is empty`() {
+    whenever(cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(any())).thenReturn(listOf())
     val result = cellMovementService.getOccupancy(1)
-
-    assertThat(result.size).isEqualTo(0)
-  }
-
-  @Test
-  fun `Get cell occupancy when no data`() {
-    whenever(cellMovementRepository.findAllByCellIdOrderByDateTimeDescIdDesc(any())).thenReturn(listOf())
-    whenever(cellMovementRepository.findAllByPrisonerIdAndIdGreaterThan(any(), any())).thenReturn(listOf())
-
-    val result = cellMovementService.getOccupancy(1)
-
     assertThat(result.size).isEqualTo(0)
   }
 
