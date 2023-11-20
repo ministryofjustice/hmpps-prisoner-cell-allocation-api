@@ -77,4 +77,19 @@ class PrisonerLocationResourceTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isNotFound
   }
+
+  @Test
+  fun `Forbidden request due to wrong role`() {
+    webTestClient
+      .get()
+      .uri("/api/prisoner/LEFT-2/current-cell")
+      .headers(
+        setAuthorisationWithUser(
+          roles = listOf("ROLE_VIEW_CELL_MOVEMENTS_X"),
+          scopes = listOf("read"),
+        ),
+      )
+      .exchange()
+      .expectStatus().isForbidden
+  }
 }

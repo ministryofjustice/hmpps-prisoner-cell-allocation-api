@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
@@ -46,7 +47,11 @@ class CellMovementService(
     val lastMovement = cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc(request.prisonerId)
 
     return if (lastMovement.isEmpty || lastMovement.get().direction == Direction.OUT) {
-      throw ClientException(404, "Prisoner has no cell allocation", "No current cell allocation found for given prisoner id")
+      throw ClientException(
+        404,
+        "Prisoner has no cell allocation",
+        "No current cell allocation found for given prisoner id",
+      )
     } else {
       val lm = lastMovement.get()
       PrisonerSearchResponse(
@@ -57,5 +62,10 @@ class CellMovementService(
         prisonerName = lm.prisonerName!!,
       )
     }
+  }
+
+  fun getOccupancy(cellId: Long): List<PrisonerResponse> {
+    val list = cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(cellId)
+    return list.map { PrisonerResponse(it.prisonerId) }
   }
 }

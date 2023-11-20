@@ -32,6 +32,7 @@ class CellMovementServiceTest {
       dateTime = LocalDateTime.of(2023, 11, 7, 12, 0),
       reason = "Reason",
     )
+
     whenever(cellMovementRepository.save(any())).thenReturn(
       CellMovement(
         id = 1,
@@ -145,6 +146,48 @@ class CellMovementServiceTest {
       ),
       result,
     )
+  }
+
+  @Test
+  fun `Get cell occupancy`() {
+    val repoResults = listOf(
+      CellMovement(
+        3,
+        "LLI",
+        1,
+        "CELL-1-1",
+        "D1234",
+        "John Smith",
+        "USER1",
+        LocalDateTime.of(2021, 11, 16, 12, 0),
+        "In",
+        Direction.IN,
+      ),
+
+      CellMovement(
+        2,
+        "LLI",
+        1,
+        "CELL-1-1",
+        "D2234",
+        "John Smith II",
+        "USER1",
+        LocalDateTime.of(2023, 11, 16, 12, 0),
+        "In",
+        Direction.IN,
+      ),
+    )
+    whenever(cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(any())).thenReturn(repoResults)
+    val result = cellMovementService.getOccupancy(1)
+
+    assertThat(result.size).isEqualTo(2)
+  }
+
+  @Test
+  fun `Get cell occupancy when result is empty`() {
+    whenever(cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(any())).thenReturn(listOf())
+    val result = cellMovementService.getOccupancy(1)
+    assertThat(result.size).isEqualTo(0)
   }
 
   @Test
