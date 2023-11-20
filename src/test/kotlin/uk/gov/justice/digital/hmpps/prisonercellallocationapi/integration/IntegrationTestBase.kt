@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.config.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.utils.RequestFactory
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(JwtAuthHelper::class)
@@ -23,6 +24,8 @@ abstract class IntegrationTestBase {
   lateinit var webTestClient: WebTestClient
 
   val objectMapper: ObjectMapper by lazy { ObjectMapper().registerModule(JavaTimeModule()) }
+
+  val factory: RequestFactory = RequestFactory()
 
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthHelper
