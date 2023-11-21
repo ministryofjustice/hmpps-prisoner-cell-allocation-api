@@ -59,11 +59,11 @@ class CellOccupancyResource(
       ),
     ],
   )
-  @GetMapping(path = ["/cell/{cellId}/occupancy"])
+  @GetMapping(path = ["/nomis-cell/{nomisCellId}/occupancy"])
   fun getCellOccupancy(
     @PathVariable
     @Valid
     @NotEmpty
-    cellId: Long,
-  ): List<PrisonerResponse> = cellMovementService.getOccupancy(cellId)
+    nomisCellId: String,
+  ): List<PrisonerResponse> = cellMovementService.getOccupancy(nomisCellId)
 }

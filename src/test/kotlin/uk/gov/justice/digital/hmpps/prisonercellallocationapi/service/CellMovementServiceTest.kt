@@ -24,8 +24,7 @@ class CellMovementServiceTest {
   fun `Successful move in movement`() {
     val request = CellMovementRequest(
       agency = "Agency",
-      cellId = 1,
-      cellDescription = "Cell Description",
+      nomisCellId = "LII-CELL-A",
       prisonerId = "123",
       prisonerName = "Prisoner Name",
       userId = "user Id",
@@ -37,8 +36,7 @@ class CellMovementServiceTest {
       CellMovement(
         id = 1,
         agency = request.agency,
-        cellId = request.cellId,
-        cellDescription = request.cellDescription,
+        nomisCellId = "LII-CELL-A",
         prisonerId = request.prisonerId,
         prisonerName = request.prisonerName,
         userId = request.userId,
@@ -53,8 +51,7 @@ class CellMovementServiceTest {
       CellMovement(
         id = null,
         agency = request.agency,
-        cellId = request.cellId,
-        cellDescription = request.cellDescription,
+        nomisCellId = request.nomisCellId,
         prisonerId = request.prisonerId,
         prisonerName = request.prisonerName,
         userId = request.userId,
@@ -70,8 +67,7 @@ class CellMovementServiceTest {
   fun `Successful move out movement`() {
     val request = CellMovementRequest(
       agency = "Agency",
-      cellId = 1,
-      cellDescription = "Cell Description",
+      nomisCellId = "LII-CELL-A",
       prisonerId = "123",
       prisonerName = "Prisoner Name",
       userId = "user Id",
@@ -82,8 +78,7 @@ class CellMovementServiceTest {
       CellMovement(
         id = 1,
         agency = request.agency,
-        cellId = request.cellId,
-        cellDescription = request.cellDescription,
+        nomisCellId = request.nomisCellId,
         prisonerId = request.prisonerId,
         prisonerName = request.prisonerName,
         userId = request.userId,
@@ -98,8 +93,7 @@ class CellMovementServiceTest {
       CellMovement(
         id = null,
         agency = request.agency,
-        cellId = request.cellId,
-        cellDescription = request.cellDescription,
+        nomisCellId = request.nomisCellId,
         prisonerId = request.prisonerId,
         prisonerName = request.prisonerName,
         userId = request.userId,
@@ -119,8 +113,7 @@ class CellMovementServiceTest {
     val lastMovement = CellMovement(
       id = 1,
       agency = "Agency",
-      cellId = 1,
-      cellDescription = "Current Cell",
+      nomisCellId = "LII-CELL-A",
       prisonerId = prisonerId,
       prisonerName = "Prisoner Name",
       userId = "user12",
@@ -141,8 +134,7 @@ class CellMovementServiceTest {
         lastMovement.id!!,
         lastMovement.prisonerId,
         lastMovement.prisonerName,
-        lastMovement.cellId,
-        lastMovement.cellDescription,
+        lastMovement.nomisCellId,
       ),
       result,
     )
@@ -154,7 +146,6 @@ class CellMovementServiceTest {
       CellMovement(
         3,
         "LLI",
-        1,
         "CELL-1-1",
         "D1234",
         "John Smith",
@@ -167,7 +158,6 @@ class CellMovementServiceTest {
       CellMovement(
         2,
         "LLI",
-        1,
         "CELL-1-1",
         "D2234",
         "John Smith II",
@@ -178,7 +168,7 @@ class CellMovementServiceTest {
       ),
     )
     whenever(cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(any())).thenReturn(repoResults)
-    val result = cellMovementService.getOccupancy(1)
+    val result = cellMovementService.getOccupancy("CELL-1-1")
 
     assertThat(result.size).isEqualTo(2)
   }
@@ -186,7 +176,7 @@ class CellMovementServiceTest {
   @Test
   fun `Get cell occupancy when result is empty`() {
     whenever(cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(any())).thenReturn(listOf())
-    val result = cellMovementService.getOccupancy(1)
+    val result = cellMovementService.getOccupancy("CELL-1-1")
     assertThat(result.size).isEqualTo(0)
   }
 
@@ -198,8 +188,7 @@ class CellMovementServiceTest {
     val lastMovement = CellMovement(
       id = 1,
       agency = "Agency",
-      cellId = 1,
-      cellDescription = "Current Cell",
+      nomisCellId = "CELL-1-1",
       prisonerId = prisonerId,
       prisonerName = "Prisoner Name",
       userId = "user12",
@@ -222,7 +211,6 @@ class CellMovementServiceTest {
     assertThat(actual.id).isEqualTo(expected.id)
     assertThat(actual.prisonerId).isEqualTo(expected.prisonerId)
     assertThat(actual.prisonerName).isEqualTo(expected.prisonerName)
-    assertThat(actual.cellId).isEqualTo(expected.cellId)
-    assertThat(actual.cellDescription).isEqualTo(expected.cellDescription)
+    assertThat(actual.nomisCellId).isEqualTo(expected.nomisCellId)
   }
 }

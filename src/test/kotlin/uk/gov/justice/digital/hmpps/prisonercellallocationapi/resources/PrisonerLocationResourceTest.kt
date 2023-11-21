@@ -22,8 +22,7 @@ class PrisonerLocationResourceTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody()
       .jsonPath("prisonerName").isEqualTo("Current Prisoner")
-      .jsonPath("cellId").isEqualTo(1)
-      .jsonPath("cellDescription").isEqualTo("LII-CELL-A")
+      .jsonPath("nomisCellId").isEqualTo("LII-CELL-A")
   }
 
   @Test
@@ -42,8 +41,7 @@ class PrisonerLocationResourceTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody()
       .jsonPath("prisonerName").isEqualTo("Current Prisoner Two")
-      .jsonPath("cellId").isEqualTo(2)
-      .jsonPath("cellDescription").isEqualTo("LII-CELL-B")
+      .jsonPath("nomisCellId").isEqualTo("LII-CELL-B")
   }
 
   @Test

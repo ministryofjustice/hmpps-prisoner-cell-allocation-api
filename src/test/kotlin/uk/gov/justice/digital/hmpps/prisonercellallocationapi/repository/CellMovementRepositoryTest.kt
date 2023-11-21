@@ -48,7 +48,7 @@ class CellMovementRepositoryTest : RepositoryTest() {
     assertThat(result).isPresent
     assertThat(result.get()).isEqualTo(
       CellMovement(
-        410, "LII", 1, "LII-CELL-A", "LEFT-2", "Former Prisoner", "USER1",
+        410, "LII", "LII-CELL-A", "LEFT-2", "Former Prisoner", "USER1",
         LocalDateTime.of(2021, 1, 4, 1, 1, 1), "Test data", Direction.OUT,
       ),
     )
@@ -63,15 +63,14 @@ class CellMovementRepositoryTest : RepositoryTest() {
   @Test
   @Sql("classpath:repository/vacated-prisoner-one-residence.sql")
   fun `find cell occupancy with a vacated prisoner returns empty list`() {
-    val result = repository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(1)
+    val result = repository.findAllByPrisonerWhoseLastMovementWasIntoThisCell("LII-CELL-A")
     assertThat(result).isEmpty()
   }
 
   fun createCellMovementRecord(direction: Direction) = CellMovement(
     id = null,
     agency = "Agency",
-    cellId = 1234,
-    cellDescription = "Cell Desc",
+    nomisCellId = "LII-CELL-A",
     prisonerId = " prisoner Id",
     prisonerName = "Adam Walker",
     userId = "user Id",

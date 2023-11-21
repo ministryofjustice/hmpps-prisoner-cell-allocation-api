@@ -14,16 +14,10 @@ data class CellMovementRequest(
   var agency: String,
 
   @Schema(
-    description = "The unique reference number for the cell the person is being assigned to",
-    example = "25463",
-  )
-  var cellId: Long,
-
-  @Schema(
-    description = "The common name for the cell the person is being assigned to e.g",
+    description = "The cell name in Nomis the person is being assigned to e.g",
     example = "A-1-2-003",
   )
-  var cellDescription: String,
+  var nomisCellId: String,
 
   @Schema(
     description = "The unique prison number for the person being assigned the cell",
