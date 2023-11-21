@@ -55,12 +55,12 @@ class CellMovementService(
     }
   }
   fun findHistoryByPrisonerId(request: PrisonerSearchRequest): MovementHistoryResponse {
-    val pageRequest = PageRequest.of(request.page!!, request.pageSize!!, Sort.by(Order.desc("date_time")))
+    val pageRequest = PageRequest.of(request.page, request.pageSize, Sort.by(Order.desc("dateTime")))
 
     val movements = if (request.dateFrom == null) {
-      cellMovementRepository.findByPrisonerIdIgnoreCaseOrderByDateTimeDesc(request.prisonerId, pageRequest)
+      cellMovementRepository.findByPrisonerIdIgnoreCase(request.prisonerId, pageRequest)
     } else {
-      cellMovementRepository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqualOrderByDateTimeDesc(
+      cellMovementRepository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(
         request.prisonerId,
         request.dateFrom!!.atStartOfDay(),
         pageRequest,

@@ -19,7 +19,7 @@ interface CellMovementRepository : JpaRepository<CellMovement, Long> {
   )
   fun findAllByPrisonerWhoseLastMovementWasIntoThisCell(cellId: String): List<CellMovement>
 
-  fun findByPrisonerIdIgnoreCaseOrderByDateTimeDesc(prisonerId: String, pageable: Pageable): List<CellMovement>
+  fun findByPrisonerIdIgnoreCase(prisonerId: String, pageable: Pageable): List<CellMovement>
 
-  fun findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqualOrderByDateTimeDesc(prisonerId: String, dateTime: LocalDateTime, pageable: Pageable): List<CellMovement>
+  fun findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(prisonerId: String, dateTime: LocalDateTime, pageable: Pageable): List<CellMovement>
 }

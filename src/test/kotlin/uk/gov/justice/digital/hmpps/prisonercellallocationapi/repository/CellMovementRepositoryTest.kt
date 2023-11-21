@@ -48,8 +48,8 @@ class CellMovementRepositoryTest : RepositoryTest() {
     assertThat(result).isPresent
     assertThat(result.get()).isEqualTo(
       CellMovement(
-        410, "LII", "LII-CELL-A", "LEFT-2", "Former Prisoner", "USER1",
-        LocalDateTime.of(2021, 1, 4, 1, 1, 1), "Test data", Direction.OUT,
+        410, "LII", "LII-CELL-B", "LEFT-2", "Former Prisoner", "USER1",
+        LocalDateTime.of(2021, 1, 4, 1, 1, 1), "Test data - stay two out", Direction.OUT,
       ),
     )
   }
@@ -67,7 +67,7 @@ class CellMovementRepositoryTest : RepositoryTest() {
     assertThat(result).isEmpty()
   }
 
-  fun createCellMovementRecord(direction: Direction) = CellMovement(
+  private fun createCellMovementRecord(direction: Direction) = CellMovement(
     id = null,
     agency = "Agency",
     nomisCellId = "LII-CELL-A",
