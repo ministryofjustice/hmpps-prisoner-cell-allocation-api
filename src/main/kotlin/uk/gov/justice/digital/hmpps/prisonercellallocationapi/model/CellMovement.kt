@@ -16,8 +16,7 @@ data class CellMovement(
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   val id: Long? = null,
   val agency: String,
-  val cellId: Long,
-  val cellDescription: String,
+  val nomisCellId: String,
   val prisonerId: String,
   val prisonerName: String,
   val userId: String,

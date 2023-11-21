@@ -33,8 +33,7 @@ class CellMovementService(
 
   private fun createCellMovement(request: CellMovementRequest, direction: Direction) = CellMovement(
     agency = request.agency,
-    cellId = request.cellId,
-    cellDescription = request.cellDescription,
+    nomisCellId = request.nomisCellId,
     prisonerId = request.prisonerId,
     prisonerName = request.prisonerName,
     userId = request.userId,
@@ -56,16 +55,15 @@ class CellMovementService(
       val lm = lastMovement.get()
       PrisonerSearchResponse(
         id = lm.id!!,
-        cellDescription = lm.cellDescription!!,
-        cellId = lm.cellId!!,
-        prisonerId = lm.prisonerId!!,
-        prisonerName = lm.prisonerName!!,
+        nomisCellId = lm.nomisCellId,
+        prisonerId = lm.prisonerId,
+        prisonerName = lm.prisonerName,
       )
     }
   }
 
-  fun getOccupancy(cellId: Long): List<PrisonerResponse> {
-    val list = cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(cellId)
+  fun getOccupancy(nomisCellId: String): List<PrisonerResponse> {
+    val list = cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(nomisCellId)
     return list.map { PrisonerResponse(it.prisonerId) }
   }
 }

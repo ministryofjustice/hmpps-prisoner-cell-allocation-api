@@ -7,8 +7,7 @@ class RequestFactory {
 
   fun aMovementRequest(prisonerId: String): CellMovementRequest = CellMovementRequest(
     "MDI",
-    123,
-    "Cell Description",
+    "CELL-1-1",
     prisonerId,
     "Batz Jerel",
     "guardian id",

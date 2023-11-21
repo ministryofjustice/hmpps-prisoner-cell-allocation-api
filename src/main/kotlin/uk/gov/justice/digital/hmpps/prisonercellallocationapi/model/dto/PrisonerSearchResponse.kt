@@ -23,14 +23,8 @@ data class PrisonerSearchResponse(
   var prisonerName: String,
 
   @Schema(
-    description = "The unique reference number for the cell the person is assigned to",
-    example = "25463",
-  )
-  var cellId: Long,
-
-  @Schema(
-    description = "The common name for the cell the person is assigned to",
+    description = "The Nomis name for the cell the person is assigned to",
     example = "A-1-2-003",
   )
-  var cellDescription: String,
+  var nomisCellId: String,
 )

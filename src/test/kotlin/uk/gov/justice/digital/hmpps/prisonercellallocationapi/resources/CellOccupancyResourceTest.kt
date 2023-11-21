@@ -11,7 +11,7 @@ class CellOccupancyResourceTest : IntegrationTestBase() {
   fun `get list of people in the cell`() {
     webTestClient
       .get()
-      .uri("/api/cell/2/occupancy")
+      .uri("/api/nomis-cell/LII-CELL-B/occupancy")
       .headers(
         setAuthorisationWithUser(
           roles = listOf("ROLE_VIEW_CELL_MOVEMENTS"),
@@ -31,7 +31,7 @@ class CellOccupancyResourceTest : IntegrationTestBase() {
   fun `Forbidden request due to wrong role`() {
     webTestClient
       .get()
-      .uri("/api/cell/1/occupancy")
+      .uri("/api/nomis-cell/LII-CELL-B/occupancy")
       .headers(
         setAuthorisationWithUser(
           roles = listOf("ROLE_VIEW_CELL_MOVEMENTS_X"),
