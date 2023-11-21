@@ -48,8 +48,7 @@ class CellMovementService(
       val lm = lastMovement.get()
       PrisonerSearchResponse(
         id = lm.id!!,
-        cellDescription = lm.cellDescription,
-        cellId = lm.cellId,
+        nomisCellId = lm.nomisCellId,
         prisonerId = lm.prisonerId,
         prisonerName = lm.prisonerName,
       )
@@ -61,7 +60,7 @@ class CellMovementService(
     val movements = if (request.dateFrom == null) {
       cellMovementRepository.findByPrisonerIdIgnoreCaseOrderByDateTimeDesc(request.prisonerId, pageRequest)
     } else {
-      cellMovementRepository.findByPrisonerIdAndDateTimeGreaterThanEqualOrderByDateTimeDesc(
+      cellMovementRepository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqualOrderByDateTimeDesc(
         request.prisonerId,
         request.dateFrom!!.atStartOfDay(),
         pageRequest,
@@ -70,15 +69,14 @@ class CellMovementService(
     return MovementHistoryResponse(movements, pageRequest.pageNumber, pageRequest.pageSize)
   }
 
-  fun getOccupancy(cellId: Long): List<PrisonerResponse> {
-    val list = cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(cellId)
+  fun getOccupancy(nomisCellId: String): List<PrisonerResponse> {
+    val list = cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(nomisCellId)
     return list.map { PrisonerResponse(it.prisonerId, it.prisonerName) }
   }
 
   private fun createCellMovement(request: CellMovementRequest, direction: Direction) = CellMovement(
     agency = request.agency,
-    cellId = request.cellId,
-    cellDescription = request.cellDescription,
+    nomisCellId = request.nomisCellId,
     prisonerId = request.prisonerId,
     prisonerName = request.prisonerName,
     userId = request.userId,
