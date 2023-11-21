@@ -10,11 +10,14 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MovementHistoryResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.CellMovementService
+import java.time.LocalDate
 
 @RestController
 @RequestMapping(value = ["/api/prisoner/"], produces = ["application/json"])
@@ -69,5 +72,19 @@ class PrisonerLocationResource(
     @Valid
     @NotNull
     prisonerId: String,
-  ): PrisonerSearchResponse = cellMovementService.findByPrisonerId(PrisonerSearchRequest(prisonerId))
+  ): PrisonerSearchResponse = cellMovementService.findByPrisonerId(prisonerId)
+
+  @GetMapping(path = ["{prisonerId}/history"])
+  fun getHistory(
+    @PathVariable
+    @Valid
+    @NotNull
+    prisonerId: String,
+    @RequestParam(defaultValue = "0")
+    page: Int,
+    @RequestParam(defaultValue = "10")
+    pageSize: Int,
+    @RequestParam(required = false)
+    dateFrom: LocalDate,
+  ): MovementHistoryResponse = cellMovementService.findHistoryByPrisonerId(PrisonerSearchRequest(prisonerId, page, pageSize, dateFrom))
 }

@@ -10,7 +10,6 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
 import java.time.LocalDateTime
@@ -114,7 +113,6 @@ class CellMovementServiceTest {
   @Test
   fun `Find currently housed prisoner`() {
     val prisonerId = "12345"
-    val request = PrisonerSearchRequest(prisonerId)
 
     val lastMovement = CellMovement(
       id = 1,
@@ -132,7 +130,7 @@ class CellMovementServiceTest {
       Optional.of(lastMovement),
     )
 
-    val result = cellMovementService.findByPrisonerId(request)
+    val result = cellMovementService.findByPrisonerId(prisonerId)
 
     verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId)
 
@@ -193,7 +191,6 @@ class CellMovementServiceTest {
   @Test
   fun `Find released prisoner`() {
     val prisonerId = "12345"
-    val request = PrisonerSearchRequest(prisonerId)
 
     val lastMovement = CellMovement(
       id = 1,
@@ -212,7 +209,7 @@ class CellMovementServiceTest {
     )
 
     assertThrows(RuntimeException::class.java) {
-      cellMovementService.findByPrisonerId(request)
+      cellMovementService.findByPrisonerId(prisonerId)
     }
 
     verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId)
