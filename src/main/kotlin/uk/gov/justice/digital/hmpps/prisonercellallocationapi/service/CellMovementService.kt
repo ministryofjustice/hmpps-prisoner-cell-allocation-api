@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.prisonercellallocationapi.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Order
@@ -58,8 +59,10 @@ class CellMovementService(
     val pageRequest = PageRequest.of(request.page, request.pageSize, Sort.by(Order.desc("dateTime")))
 
     val movements = if (request.dateFrom == null) {
+      log.info("Finding history for prisonerId [{}], no time limit", request.prisonerId)
       cellMovementRepository.findByPrisonerIdIgnoreCase(request.prisonerId, pageRequest)
     } else {
+      log.info("Finding history for prisonerId [{}] since [{}]", request.prisonerId, request.dateFrom!!.atStartOfDay())
       cellMovementRepository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(
         request.prisonerId,
         request.dateFrom!!.atStartOfDay(),
@@ -84,4 +87,8 @@ class CellMovementService(
     reason = request.reason,
     direction = direction,
   )
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 }

@@ -10,8 +10,10 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -169,6 +171,60 @@ class CellMovementServiceTest {
     val result = cellMovementService.getOccupancy("CELL-1-1")
 
     assertThat(result.size).isEqualTo(2)
+  }
+
+  @Test
+  fun `Get cell history for prisoner`() {
+    val repoResults = listOf(
+      CellMovement(
+        3,
+        "LLI",
+        "CELL-1-1",
+        "D1234",
+        "John Smith",
+        "USER1",
+        LocalDateTime.of(2021, 11, 16, 12, 0),
+        "In",
+        Direction.IN,
+      ),
+
+      CellMovement(
+        2,
+        "LLI",
+        "CELL-1-1",
+        "D1234",
+        "John Smith II",
+        "USER1",
+        LocalDateTime.of(2023, 11, 16, 12, 0),
+        "Release",
+        Direction.OUT,
+      ),
+    )
+    whenever(cellMovementRepository.findByPrisonerIdIgnoreCase(any(), any())).thenReturn(repoResults)
+    val result = cellMovementService.findHistoryByPrisonerId(PrisonerSearchRequest("D1234", 0, 1))
+
+    assertThat(result.movements.size).isEqualTo(2)
+  }
+
+  @Test
+  fun `Get cell history for prisoner with date threshold`() {
+    val repoResults = listOf(
+      CellMovement(
+        3,
+        "LLI",
+        "CELL-1-1",
+        "D1234",
+        "John Smith",
+        "USER1",
+        LocalDateTime.of(2021, 11, 16, 12, 0),
+        "In",
+        Direction.IN,
+      ),
+    )
+    whenever(cellMovementRepository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(any(), any(), any())).thenReturn(repoResults)
+    val result = cellMovementService.findHistoryByPrisonerId(PrisonerSearchRequest("D1234", 0, 1, LocalDate.MIN))
+
+    assertThat(result.movements.size).isEqualTo(1)
   }
 
   @Test

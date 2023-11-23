@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Pageable
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.transaction.TestTransaction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
@@ -13,6 +14,7 @@ import java.time.LocalDateTime
 class CellMovementRepositoryTest : RepositoryTest() {
   @Autowired
   lateinit var repository: CellMovementRepository
+  val allResults: Pageable = Pageable.ofSize(Int.MAX_VALUE)
 
   @AfterEach
   fun afterEach() {
@@ -65,6 +67,21 @@ class CellMovementRepositoryTest : RepositoryTest() {
   fun `find cell occupancy with a vacated prisoner returns empty list`() {
     val result = repository.findAllByPrisonerWhoseLastMovementWasIntoThisCell("LII-CELL-A")
     assertThat(result).isEmpty()
+  }
+
+  @Test
+  @Sql("classpath:repository/vacated-prisoner-one-residence.sql")
+  fun `find movement history for vacated prisoner returns two movements`() {
+    val result = repository.findByPrisonerIdIgnoreCase("LEFT-1", allResults)
+    assertThat(result).hasSize(2)
+  }
+
+  @Test
+  @Sql("classpath:repository/vacated-prisoner-one-residence.sql")
+  fun `find movement history for vacated prisoner with max date between arrival and release returns one movements`() {
+    val maxTime = LocalDateTime.of(2020, 1, 3, 12, 30)
+    val result = repository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual("LEFT-1", maxTime, allResults)
+    assertThat(result).hasSize(1)
   }
 
   private fun createCellMovementRecord(direction: Direction) = CellMovement(

@@ -29,5 +29,5 @@ data class PrisonerSearchRequest(
     description = "The parameters for historical movements for the given person",
     required = false,
   )
-  var dateFrom: LocalDate? = LocalDate.MIN,
+  var dateFrom: LocalDate? = null,
 )
