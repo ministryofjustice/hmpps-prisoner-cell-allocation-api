@@ -12,7 +12,7 @@ data class PrisonerResponse(
 
   @Schema(
     description = "The name of the person as recorded for the given movement",
-    example = "G7685GO",
+    example = "John Smith",
   )
   var prisonerName: String,
 

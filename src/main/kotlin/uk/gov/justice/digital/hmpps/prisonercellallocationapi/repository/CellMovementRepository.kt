@@ -22,4 +22,7 @@ interface CellMovementRepository : JpaRepository<CellMovement, Long> {
   fun findByPrisonerIdIgnoreCase(prisonerId: String, pageable: Pageable): List<CellMovement>
 
   fun findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(prisonerId: String, dateTime: LocalDateTime, pageable: Pageable): List<CellMovement>
+  fun findByNomisCellIdIgnoreCase(nomisCellId: String, pageable: Pageable): List<CellMovement>
+
+  fun findByNomisCellIdIgnoreCaseAndDateTimeGreaterThanEqual(prisonerId: String, dateTime: LocalDateTime, pageable: Pageable): List<CellMovement>
 }

@@ -5,13 +5,13 @@ import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDate
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class PrisonerSearchRequest(
+data class MovementHistoryRequest(
 
   @Schema(
-    description = "The unique prison number for the person being searched for",
-    example = "G7685GO",
+    description = "The NOMIS identifier for the cell or person being searched for",
+    example = "ABC-1-1-1 or A12345D",
   )
-  var prisonerId: String,
+  var objectId: String,
 
   @Schema(
     description = "The zero indexed page number to return",
@@ -26,7 +26,7 @@ data class PrisonerSearchRequest(
   var pageSize: Int,
 
   @Schema(
-    description = "The parameters for historical movements for the given person",
+    description = "The parameters for historical movements for the given cell",
     required = false,
   )
   var dateFrom: LocalDate? = null,

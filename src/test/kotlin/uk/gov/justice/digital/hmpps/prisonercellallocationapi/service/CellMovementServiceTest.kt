@@ -10,7 +10,7 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MovementHistoryRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
 import java.time.LocalDate
@@ -201,7 +201,7 @@ class CellMovementServiceTest {
       ),
     )
     whenever(cellMovementRepository.findByPrisonerIdIgnoreCase(any(), any())).thenReturn(repoResults)
-    val result = cellMovementService.findHistoryByPrisonerId(PrisonerSearchRequest("D1234", 0, 1))
+    val result = cellMovementService.findHistoryByPrisonerId(MovementHistoryRequest("D1234", 0, 1))
 
     assertThat(result.movements.size).isEqualTo(2)
   }
@@ -222,7 +222,7 @@ class CellMovementServiceTest {
       ),
     )
     whenever(cellMovementRepository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(any(), any(), any())).thenReturn(repoResults)
-    val result = cellMovementService.findHistoryByPrisonerId(PrisonerSearchRequest("D1234", 0, 1, LocalDate.MIN))
+    val result = cellMovementService.findHistoryByPrisonerId(MovementHistoryRequest("D1234", 0, 1, LocalDate.MIN))
 
     assertThat(result.movements.size).isEqualTo(1)
   }
