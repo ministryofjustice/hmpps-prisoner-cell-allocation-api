@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MovementHistoryResponse
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources.MovementHistoryTestBase.historyType.CELL
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources.MovementHistoryTestBase.HistoryType.CELL
 import java.time.LocalDateTime
 import java.time.Month
 

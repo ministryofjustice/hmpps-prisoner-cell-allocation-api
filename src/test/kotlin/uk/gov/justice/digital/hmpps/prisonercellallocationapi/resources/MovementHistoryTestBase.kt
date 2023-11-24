@@ -8,7 +8,7 @@ import java.util.Optional.ofNullable
 abstract class MovementHistoryTestBase : IntegrationTestBase() {
 
   internal fun getMovementHistory(
-    type: historyType,
+    type: HistoryType,
     objectId: String,
     page: Int? = null,
     pageSize: Int? = null,
@@ -35,7 +35,7 @@ abstract class MovementHistoryTestBase : IntegrationTestBase() {
       .returnResult().responseBody!!
   }
 
-  enum class historyType(val uriString: String) {
+  enum class HistoryType(val uriString: String) {
     PRISONER("prisoner"),
     CELL("nomis-cell"),
   }
