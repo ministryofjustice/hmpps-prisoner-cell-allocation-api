@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMove
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -108,7 +109,6 @@ class CellMovementServiceTest {
   @Test
   fun `Find currently housed prisoner`() {
     val prisonerId = "12345"
-    val request = PrisonerSearchRequest(prisonerId)
 
     val lastMovement = CellMovement(
       id = 1,
@@ -125,7 +125,7 @@ class CellMovementServiceTest {
       Optional.of(lastMovement),
     )
 
-    val result = cellMovementService.findByPrisonerId(request)
+    val result = cellMovementService.findByPrisonerId(prisonerId)
 
     verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId)
 
@@ -174,6 +174,60 @@ class CellMovementServiceTest {
   }
 
   @Test
+  fun `Get cell history for prisoner`() {
+    val repoResults = listOf(
+      CellMovement(
+        3,
+        "LLI",
+        "CELL-1-1",
+        "D1234",
+        "John Smith",
+        "USER1",
+        LocalDateTime.of(2021, 11, 16, 12, 0),
+        "In",
+        Direction.IN,
+      ),
+
+      CellMovement(
+        2,
+        "LLI",
+        "CELL-1-1",
+        "D1234",
+        "John Smith II",
+        "USER1",
+        LocalDateTime.of(2023, 11, 16, 12, 0),
+        "Release",
+        Direction.OUT,
+      ),
+    )
+    whenever(cellMovementRepository.findByPrisonerIdIgnoreCase(any(), any())).thenReturn(repoResults)
+    val result = cellMovementService.findHistoryByPrisonerId(PrisonerSearchRequest("D1234", 0, 1))
+
+    assertThat(result.movements.size).isEqualTo(2)
+  }
+
+  @Test
+  fun `Get cell history for prisoner with date threshold`() {
+    val repoResults = listOf(
+      CellMovement(
+        3,
+        "LLI",
+        "CELL-1-1",
+        "D1234",
+        "John Smith",
+        "USER1",
+        LocalDateTime.of(2021, 11, 16, 12, 0),
+        "In",
+        Direction.IN,
+      ),
+    )
+    whenever(cellMovementRepository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(any(), any(), any())).thenReturn(repoResults)
+    val result = cellMovementService.findHistoryByPrisonerId(PrisonerSearchRequest("D1234", 0, 1, LocalDate.MIN))
+
+    assertThat(result.movements.size).isEqualTo(1)
+  }
+
+  @Test
   fun `Get cell occupancy when result is empty`() {
     whenever(cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(any())).thenReturn(listOf())
     val result = cellMovementService.getOccupancy("CELL-1-1")
@@ -183,7 +237,6 @@ class CellMovementServiceTest {
   @Test
   fun `Find released prisoner`() {
     val prisonerId = "12345"
-    val request = PrisonerSearchRequest(prisonerId)
 
     val lastMovement = CellMovement(
       id = 1,
@@ -201,7 +254,7 @@ class CellMovementServiceTest {
     )
 
     assertThrows(RuntimeException::class.java) {
-      cellMovementService.findByPrisonerId(request)
+      cellMovementService.findByPrisonerId(prisonerId)
     }
 
     verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId)

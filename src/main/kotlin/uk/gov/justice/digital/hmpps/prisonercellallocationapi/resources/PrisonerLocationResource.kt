@@ -6,15 +6,19 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
+import org.slf4j.LoggerFactory
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MovementHistoryResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.CellMovementService
+import java.time.LocalDate
 
 @RestController
 @RequestMapping(value = ["/api/prisoner/"], produces = ["application/json"])
@@ -69,5 +73,32 @@ class PrisonerLocationResource(
     @Valid
     @NotNull
     prisonerId: String,
-  ): PrisonerSearchResponse = cellMovementService.findByPrisonerId(PrisonerSearchRequest(prisonerId))
+  ): PrisonerSearchResponse = cellMovementService.findByPrisonerId(prisonerId)
+
+  @PreAuthorize("hasRole('ROLE_VIEW_CELL_MOVEMENTS')")
+  @GetMapping(path = ["{prisonerId}/history"])
+  fun getHistory(
+    @PathVariable
+    @Valid
+    @NotNull
+    prisonerId: String,
+    @RequestParam(defaultValue = "0")
+    page: Int,
+    @RequestParam(defaultValue = "10")
+    pageSize: Int,
+    @RequestParam(required = false)
+    dateFrom: LocalDate?,
+  ): MovementHistoryResponse {
+    log.info(
+      "Finding movement history for prisoner [{}] [page:{}, pageSize:{}]",
+      prisonerId,
+      page,
+      pageSize,
+    )
+    return cellMovementService.findHistoryByPrisonerId(PrisonerSearchRequest(prisonerId, page, pageSize, dateFrom))
+  }
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 }
