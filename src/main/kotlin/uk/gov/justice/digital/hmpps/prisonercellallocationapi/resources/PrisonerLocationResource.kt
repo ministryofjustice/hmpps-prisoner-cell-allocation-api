@@ -73,7 +73,10 @@ class PrisonerLocationResource(
     @Valid
     @NotNull
     prisonerId: String,
-  ): PrisonerSearchResponse = cellMovementService.findByPrisonerId(prisonerId)
+  ): PrisonerSearchResponse {
+    log.info("Finding current cell of prisonerId [{}]", prisonerId)
+    return cellMovementService.findByPrisonerId(prisonerId)
+  }
 
   @PreAuthorize("hasRole('ROLE_VIEW_CELL_MOVEMENTS')")
   @GetMapping(path = ["{prisonerId}/history"])

@@ -71,7 +71,10 @@ class CellOccupancyResource(
     @Valid
     @NotEmpty
     nomisCellId: String,
-  ): List<PrisonerResponse> = cellMovementService.getOccupancy(nomisCellId)
+  ): List<PrisonerResponse> {
+    log.info("Finding current occupancy of cell [{}]", nomisCellId)
+    return cellMovementService.getOccupancy(nomisCellId)
+  }
 
   @PreAuthorize("hasRole('ROLE_VIEW_CELL_MOVEMENTS')")
   @GetMapping(path = ["/nomis-cell/{nomisCellId}/history"])

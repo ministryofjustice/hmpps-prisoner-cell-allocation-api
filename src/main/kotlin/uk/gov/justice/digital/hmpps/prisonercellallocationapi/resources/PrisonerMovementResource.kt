@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
+import org.slf4j.LoggerFactory
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -73,6 +74,7 @@ class PrisonerMovementResource(
     @NotNull
     cellMovementRequest: CellMovementRequest,
   ): CellMovementResponse {
+    log.info("Request to move prisoner [{}] into cell", prisonerId)
     requestValidator.validateMatchingPrisonerIds(prisonerId, cellMovementRequest)
     return cellMovementService.moveIn(cellMovementRequest)
   }
@@ -124,7 +126,12 @@ class PrisonerMovementResource(
     @NotNull
     cellMovementRequest: CellMovementRequest,
   ): CellMovementResponse {
+    log.info("Request to move prisoner [{}] out of cell", prisonerId)
     requestValidator.validateMatchingPrisonerIds(prisonerId, cellMovementRequest)
     return cellMovementService.moveOut(cellMovementRequest)
+  }
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
   }
 }

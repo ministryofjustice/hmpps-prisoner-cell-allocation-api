@@ -35,7 +35,6 @@ class ExceptionHandler {
       e.status,
       e.userMessage,
       e.developerMessage,
-      e,
     )
     return ResponseEntity
       .status(e.status ?: INTERNAL_SERVER_ERROR.value())

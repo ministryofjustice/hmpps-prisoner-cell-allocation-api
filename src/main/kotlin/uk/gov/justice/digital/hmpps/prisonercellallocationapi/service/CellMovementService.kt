@@ -90,7 +90,6 @@ class CellMovementService(
 
   fun getOccupancy(nomisCellId: String): List<PrisonerResponse> {
     val list = cellMovementRepository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(nomisCellId)
-    // We should check the given prisoner still has this cell as their current cell
     return list.map { PrisonerResponse(it.prisonerId, it.prisonerName) }
   }
 
