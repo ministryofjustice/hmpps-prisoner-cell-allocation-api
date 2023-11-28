@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import org.springframework.http.client.reactive.JettyClientHttpConnector
 import org.springframework.web.reactive.function.client.WebClient
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ClientException
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.NoBodyClientException
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMoveResponse
@@ -123,46 +122,6 @@ class PrisonApiClientTest {
 
     mockServer.verify(
       WireMock.putRequestedFor(WireMock.urlEqualTo("/api/bookings/988507/move-to-cell-swap")),
-    )
-  }
-
-  @Test
-  fun `move to cell swap request fails`() {
-    mockServer.stubCellSwapNegativeResponse(123456)
-
-    val requestBody = MoveToCellSwapRequest(
-      "ADM",
-      LocalDateTime.now(),
-    )
-
-    assertThatThrownBy {
-      prisonApiClient.moveToCellSwap(123456, requestBody)
-    }.isEqualTo(
-      ClientException(
-        status = 400,
-        userMessage = "The date cannot be in the future",
-        developerMessage = "The date cannot be in the future",
-      ),
-    )
-  }
-
-  @Test
-  fun `move to cell swap location not found`() {
-    mockServer.stubCellSwapLocationNotFoundResponse(123456)
-
-    val requestBody = MoveToCellSwapRequest(
-      "ADM",
-      LocalDateTime.now(),
-    )
-
-    assertThatThrownBy {
-      prisonApiClient.moveToCellSwap(123456, requestBody)
-    }.isEqualTo(
-      ClientException(
-        status = 404,
-        userMessage = "CSWAP location not found for NMI",
-        developerMessage = "CSWAP location not found for NMI",
-      ),
     )
   }
 

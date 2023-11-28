@@ -20,7 +20,8 @@ data class CellMovement(
   val prisonerId: String,
   val prisonerName: String,
   val userId: String,
-  val dateTime: LocalDateTime,
+  val occurredAt: LocalDateTime,
+  val recordedAt: LocalDateTime,
   val reason: String,
   @Enumerated(EnumType.STRING)
   val direction: Direction,

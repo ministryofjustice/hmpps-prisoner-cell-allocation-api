@@ -28,7 +28,7 @@ class ExceptionHandler {
       )
   }
 
-  @ExceptionHandler(ClientException::class)
+  @ExceptionHandler(ClientException::class, ConflictingMovementException::class)
   fun handleClientException(e: ClientException): ResponseEntity<ErrorResponse> {
     log.warn(
       "Client exception: status {} userMessage {} developerMessage {}",

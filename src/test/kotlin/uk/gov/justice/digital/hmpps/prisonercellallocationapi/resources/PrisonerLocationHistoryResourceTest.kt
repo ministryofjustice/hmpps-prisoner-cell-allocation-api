@@ -27,7 +27,7 @@ class PrisonerLocationHistoryResourceTest : MovementHistoryTestBase() {
     assertThat(movement.prisonerId).isEqualTo(testPrisonerId)
     assertThat(movement.prisonerName).isEqualTo("Current Prisoner")
     assertThat(movement.userId).isEqualTo("USER1")
-    assertThat(movement.dateTime).isEqualTo(LocalDateTime.of(2020, Month.JANUARY, 1, 1, 1, 1))
+    assertThat(movement.occurredAt).isEqualTo(LocalDateTime.of(2020, Month.JANUARY, 1, 1, 1, 1))
     assertThat(movement.reason).isEqualTo("Test data")
     assertThat(movement.direction).isEqualTo(Direction.IN)
   }

@@ -13,13 +13,17 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMove
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MovementHistoryRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
+import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.Optional
 
 class CellMovementServiceTest {
+  private val fixedTime = LocalDateTime.of(2023, 11, 7, 12, 0)
   private val cellMovementRepository: CellMovementRepository = mock()
-  private val cellMovementService = CellMovementService(cellMovementRepository)
+  private val cellMovementService = CellMovementService(cellMovementRepository, Clock.fixed(fixedTime.toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London")))
 
   @Test
   fun `Successful move in movement`() {
@@ -29,7 +33,7 @@ class CellMovementServiceTest {
       prisonerId = "123",
       prisonerName = "Prisoner Name",
       userId = "user Id",
-      dateTime = LocalDateTime.of(2023, 11, 7, 12, 0),
+      occurredAt = LocalDateTime.of(2023, 11, 7, 12, 0),
       reason = "Reason",
     )
 
@@ -41,7 +45,8 @@ class CellMovementServiceTest {
         prisonerId = request.prisonerId,
         prisonerName = request.prisonerName,
         userId = request.userId,
-        dateTime = request.dateTime,
+        occurredAt = request.occurredAt,
+        recordedAt = fixedTime,
         reason = request.reason,
         direction = Direction.IN,
       ),
@@ -56,7 +61,8 @@ class CellMovementServiceTest {
         prisonerId = request.prisonerId,
         prisonerName = request.prisonerName,
         userId = request.userId,
-        dateTime = request.dateTime,
+        occurredAt = request.occurredAt,
+        recordedAt = fixedTime,
         reason = request.reason,
         direction = Direction.IN,
       ),
@@ -72,7 +78,7 @@ class CellMovementServiceTest {
       prisonerId = "123",
       prisonerName = "Prisoner Name",
       userId = "user Id",
-      dateTime = LocalDateTime.of(2023, 11, 7, 12, 0),
+      occurredAt = LocalDateTime.of(2023, 11, 7, 12, 0),
       reason = "Reason",
     )
     whenever(cellMovementRepository.save(any())).thenReturn(
@@ -83,7 +89,8 @@ class CellMovementServiceTest {
         prisonerId = request.prisonerId,
         prisonerName = request.prisonerName,
         userId = request.userId,
-        dateTime = request.dateTime,
+        occurredAt = request.occurredAt,
+        recordedAt = fixedTime,
         reason = request.reason,
         direction = Direction.OUT,
       ),
@@ -98,7 +105,8 @@ class CellMovementServiceTest {
         prisonerId = request.prisonerId,
         prisonerName = request.prisonerName,
         userId = request.userId,
-        dateTime = request.dateTime,
+        occurredAt = request.occurredAt,
+        recordedAt = fixedTime,
         reason = request.reason,
         direction = Direction.OUT,
       ),
@@ -117,17 +125,18 @@ class CellMovementServiceTest {
       prisonerId = prisonerId,
       prisonerName = "Prisoner Name",
       userId = "user12",
-      dateTime = LocalDateTime.of(2023, 11, 7, 12, 0),
+      recordedAt = LocalDateTime.of(2023, 11, 7, 12, 0),
+      occurredAt = LocalDateTime.of(2023, 11, 7, 12, 0),
       reason = "Reason",
       direction = Direction.IN,
     )
-    whenever(cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc(any())).thenReturn(
+    whenever(cellMovementRepository.findFirstByPrisonerIdOrderByOccurredAtDesc(any())).thenReturn(
       Optional.of(lastMovement),
     )
 
     val result = cellMovementService.findByPrisonerId(prisonerId)
 
-    verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId)
+    verify(cellMovementRepository).findFirstByPrisonerIdOrderByOccurredAtDesc(prisonerId)
 
     assertPrisonerSearchResponse(
       PrisonerSearchResponse(
@@ -151,6 +160,7 @@ class CellMovementServiceTest {
         "John Smith",
         "USER1",
         LocalDateTime.of(2021, 11, 16, 12, 0),
+        LocalDateTime.of(2021, 11, 16, 12, 0),
         "In",
         Direction.IN,
       ),
@@ -162,6 +172,7 @@ class CellMovementServiceTest {
         "D2234",
         "John Smith II",
         "USER1",
+        LocalDateTime.of(2023, 11, 16, 12, 0),
         LocalDateTime.of(2023, 11, 16, 12, 0),
         "In",
         Direction.IN,
@@ -184,6 +195,7 @@ class CellMovementServiceTest {
         "John Smith",
         "USER1",
         LocalDateTime.of(2021, 11, 16, 12, 0),
+        LocalDateTime.of(2021, 11, 16, 12, 0),
         "In",
         Direction.IN,
       ),
@@ -195,6 +207,7 @@ class CellMovementServiceTest {
         "D1234",
         "John Smith II",
         "USER1",
+        LocalDateTime.of(2023, 11, 16, 12, 0),
         LocalDateTime.of(2023, 11, 16, 12, 0),
         "Release",
         Direction.OUT,
@@ -217,11 +230,12 @@ class CellMovementServiceTest {
         "John Smith",
         "USER1",
         LocalDateTime.of(2021, 11, 16, 12, 0),
+        LocalDateTime.of(2021, 11, 16, 12, 0),
         "In",
         Direction.IN,
       ),
     )
-    whenever(cellMovementRepository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(any(), any(), any())).thenReturn(repoResults)
+    whenever(cellMovementRepository.findByPrisonerIdIgnoreCaseAndOccurredAtGreaterThanEqual(any(), any(), any())).thenReturn(repoResults)
     val result = cellMovementService.findHistoryByPrisonerId(MovementHistoryRequest("D1234", 0, 1, LocalDate.MIN))
 
     assertThat(result.movements.size).isEqualTo(1)
@@ -245,11 +259,12 @@ class CellMovementServiceTest {
       prisonerId = prisonerId,
       prisonerName = "Prisoner Name",
       userId = "user12",
-      dateTime = LocalDateTime.of(2023, 11, 7, 12, 0),
+      occurredAt = LocalDateTime.of(2023, 11, 7, 12, 0),
       reason = "Reason",
       direction = Direction.OUT,
+      recordedAt = LocalDateTime.of(2023, 11, 7, 12, 0),
     )
-    whenever(cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc(any())).thenReturn(
+    whenever(cellMovementRepository.findFirstByPrisonerIdOrderByOccurredAtDesc(any())).thenReturn(
       Optional.of(lastMovement),
     )
 
@@ -257,7 +272,7 @@ class CellMovementServiceTest {
       cellMovementService.findByPrisonerId(prisonerId)
     }
 
-    verify(cellMovementRepository).findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId)
+    verify(cellMovementRepository).findFirstByPrisonerIdOrderByOccurredAtDesc(prisonerId)
   }
 
   private fun assertPrisonerSearchResponse(expected: PrisonerSearchResponse, actual: PrisonerSearchResponse) {
