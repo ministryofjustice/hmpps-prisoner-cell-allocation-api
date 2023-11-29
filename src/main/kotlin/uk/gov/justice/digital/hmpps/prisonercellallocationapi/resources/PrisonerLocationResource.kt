@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MovementHistoryRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MovementHistoryResponse
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.CellMovementService
 import java.time.LocalDate
@@ -73,7 +73,10 @@ class PrisonerLocationResource(
     @Valid
     @NotNull
     prisonerId: String,
-  ): PrisonerSearchResponse = cellMovementService.findByPrisonerId(prisonerId)
+  ): PrisonerSearchResponse {
+    log.info("Finding current cell of prisonerId [{}]", prisonerId)
+    return cellMovementService.findByPrisonerId(prisonerId)
+  }
 
   @PreAuthorize("hasRole('ROLE_VIEW_CELL_MOVEMENTS')")
   @GetMapping(path = ["{prisonerId}/history"])
@@ -95,7 +98,7 @@ class PrisonerLocationResource(
       page,
       pageSize,
     )
-    return cellMovementService.findHistoryByPrisonerId(PrisonerSearchRequest(prisonerId, page, pageSize, dateFrom))
+    return cellMovementService.findHistoryByPrisonerId(MovementHistoryRequest(prisonerId, page, pageSize, dateFrom))
   }
 
   companion object {

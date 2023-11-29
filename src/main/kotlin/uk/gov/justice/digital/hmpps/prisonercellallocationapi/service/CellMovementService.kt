@@ -11,9 +11,9 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementResponse
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MovementHistoryRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.MovementHistoryResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerResponse
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
 
@@ -55,16 +55,32 @@ class CellMovementService(
       )
     }
   }
-  fun findHistoryByPrisonerId(request: PrisonerSearchRequest): MovementHistoryResponse {
-    val pageRequest = PageRequest.of(request.page, request.pageSize, Sort.by(Order.desc("dateTime")))
+  fun findHistoryByPrisonerId(request: MovementHistoryRequest): MovementHistoryResponse {
+    val pageRequest = createPageRequest(request)
 
     val movements = if (request.dateFrom == null) {
-      log.info("Finding history for prisonerId [{}], no time limit", request.prisonerId)
-      cellMovementRepository.findByPrisonerIdIgnoreCase(request.prisonerId, pageRequest)
+      log.info("Finding history for prisonerId [{}], no time limit", request.objectId)
+      cellMovementRepository.findByPrisonerIdIgnoreCase(request.objectId, pageRequest)
     } else {
-      log.info("Finding history for prisonerId [{}] since [{}]", request.prisonerId, request.dateFrom!!.atStartOfDay())
+      log.info("Finding history for prisonerId [{}] since [{}]", request.objectId, request.dateFrom!!.atStartOfDay())
       cellMovementRepository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(
-        request.prisonerId,
+        request.objectId,
+        request.dateFrom!!.atStartOfDay(),
+        pageRequest,
+      )
+    }
+    return MovementHistoryResponse(movements, pageRequest.pageNumber, pageRequest.pageSize)
+  }
+
+  fun findHistoryByNomisCellId(request: MovementHistoryRequest): MovementHistoryResponse {
+    val pageRequest = createPageRequest(request)
+    val movements = if (request.dateFrom == null) {
+      log.info("Finding history for nomisCellId [{}], no time limit", request.objectId)
+      cellMovementRepository.findByNomisCellIdIgnoreCase(request.objectId, pageRequest)
+    } else {
+      log.info("Finding history for nomisCellId [{}] since [{}]", request.objectId, request.dateFrom!!.atStartOfDay())
+      cellMovementRepository.findByNomisCellIdIgnoreCaseAndDateTimeGreaterThanEqual(
+        request.objectId,
         request.dateFrom!!.atStartOfDay(),
         pageRequest,
       )
@@ -86,6 +102,12 @@ class CellMovementService(
     dateTime = request.dateTime,
     reason = request.reason,
     direction = direction,
+  )
+
+  private fun createPageRequest(request: MovementHistoryRequest) = PageRequest.of(
+    request.page,
+    request.pageSize,
+    Sort.by(Order.desc("dateTime")),
   )
 
   companion object {

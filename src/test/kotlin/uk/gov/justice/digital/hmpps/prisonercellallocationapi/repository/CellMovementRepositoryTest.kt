@@ -71,6 +71,21 @@ class CellMovementRepositoryTest : RepositoryTest() {
 
   @Test
   @Sql("classpath:repository/vacated-prisoner-one-residence.sql")
+  fun `find movement history for empty cell two movements`() {
+    val result = repository.findByNomisCellIdIgnoreCase("LII-CELL-A", allResults)
+    assertThat(result).hasSize(2)
+  }
+
+  @Test
+  @Sql("classpath:repository/vacated-prisoner-one-residence.sql")
+  fun `find movement history for empty cell with max date between arrival and release returns one movements`() {
+    val maxTime = LocalDateTime.of(2020, 1, 3, 12, 30)
+    val result = repository.findByNomisCellIdIgnoreCaseAndDateTimeGreaterThanEqual("LII-CELL-A", maxTime, allResults)
+    assertThat(result).hasSize(1)
+  }
+
+  @Test
+  @Sql("classpath:repository/vacated-prisoner-one-residence.sql")
   fun `find movement history for vacated prisoner returns two movements`() {
     val result = repository.findByPrisonerIdIgnoreCase("LEFT-1", allResults)
     assertThat(result).hasSize(2)
