@@ -11,19 +11,19 @@ import java.util.Optional
 @Repository
 interface CellMovementRepository : JpaRepository<CellMovement, Long> {
 
-  fun findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId: String): Optional<CellMovement>
+  fun findFirstByPrisonerIdOrderByOccurredAtDesc(prisonerId: String): Optional<CellMovement>
 
   @Query(
-    value = "SELECT * FROM (SELECT DISTINCT ON (prisoner_id) * from cell_movement order by prisoner_id, date_time DESC) as prisoner_last_movements WHERE direction = 'IN' and nomis_cell_id = ?1",
+    value = "SELECT * FROM (SELECT DISTINCT ON (prisoner_id) * from cell_movement order by prisoner_id, occurred_at DESC) as prisoner_last_movements WHERE direction = 'IN' and nomis_cell_id = ?1",
     nativeQuery = true,
   )
   fun findAllByPrisonerWhoseLastMovementWasIntoThisCell(cellId: String): List<CellMovement>
 
   fun findByPrisonerIdIgnoreCase(prisonerId: String, pageable: Pageable): List<CellMovement>
 
-  fun findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(prisonerId: String, dateTime: LocalDateTime, pageable: Pageable): List<CellMovement>
+  fun findByPrisonerIdIgnoreCaseAndOccurredAtGreaterThanEqual(prisonerId: String, occurredAt: LocalDateTime, pageable: Pageable): List<CellMovement>
 
   fun findByNomisCellIdIgnoreCase(nomisCellId: String, pageable: Pageable): List<CellMovement>
 
-  fun findByNomisCellIdIgnoreCaseAndDateTimeGreaterThanEqual(prisonerId: String, dateTime: LocalDateTime, pageable: Pageable): List<CellMovement>
+  fun findByNomisCellIdIgnoreCaseAndOccurredAtGreaterThanEqual(prisonerId: String, occurredAt: LocalDateTime, pageable: Pageable): List<CellMovement>
 }

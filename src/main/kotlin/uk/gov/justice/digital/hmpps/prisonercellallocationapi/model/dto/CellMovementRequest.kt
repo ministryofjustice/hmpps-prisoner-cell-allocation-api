@@ -41,7 +41,7 @@ data class CellMovementRequest(
     description = "Date and time of the movement",
     example = "2022-01-18T08:00:00",
   )
-  var dateTime: LocalDateTime,
+  var occurredAt: LocalDateTime,
 
   @Schema(
     description = "The movement reason",

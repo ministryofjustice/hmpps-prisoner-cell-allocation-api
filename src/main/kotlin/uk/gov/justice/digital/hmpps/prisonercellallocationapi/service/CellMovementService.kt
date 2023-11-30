@@ -1,12 +1,14 @@
 package uk.gov.justice.digital.hmpps.prisonercellallocationapi.service
 
 import org.slf4j.LoggerFactory
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Order
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ClientException
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ConflictingMovementException
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.NoCurrentAllocationException
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.CellMovement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.Direction
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
@@ -16,31 +18,42 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.Movement
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.PrisonerSearchResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
+import java.time.Clock
+import java.time.LocalDateTime
 
 @Service
 @Transactional
 class CellMovementService(
   private val cellMovementRepository: CellMovementRepository,
+  private val clock: Clock,
 ) {
   fun moveIn(request: CellMovementRequest): CellMovementResponse {
-    val cellMovement = cellMovementRepository.save(
+    val cellMovement = attemptMove(
       createCellMovement(request, Direction.IN),
     )
     return CellMovementResponse(cellMovement.id!!)
   }
 
   fun moveOut(request: CellMovementRequest): CellMovementResponse {
-    val cellMovement = cellMovementRepository.save(
+    val cellMovement = attemptMove(
       createCellMovement(request, Direction.OUT),
     )
     return CellMovementResponse(cellMovement.id!!)
   }
 
+  private fun attemptMove(movement: CellMovement): CellMovement {
+    try {
+      return cellMovementRepository.save(movement)
+    } catch (e: DataIntegrityViolationException) {
+      throw ConflictingMovementException(message = "Unable to save move - prisonerId already has movement recorded at this time")
+    }
+  }
+
   fun findByPrisonerId(prisonerId: String): PrisonerSearchResponse {
-    val lastMovement = cellMovementRepository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc(prisonerId)
+    val lastMovement = cellMovementRepository.findFirstByPrisonerIdOrderByOccurredAtDesc(prisonerId)
 
     return if (lastMovement.isEmpty || lastMovement.get().direction == Direction.OUT) {
-      throw ClientException(
+      throw NoCurrentAllocationException(
         404,
         "Prisoner has no cell allocation",
         "No current cell allocation found for given prisoner id",
@@ -63,7 +76,7 @@ class CellMovementService(
       cellMovementRepository.findByPrisonerIdIgnoreCase(request.objectId, pageRequest)
     } else {
       log.info("Finding history for prisonerId [{}] since [{}]", request.objectId, request.dateFrom!!.atStartOfDay())
-      cellMovementRepository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual(
+      cellMovementRepository.findByPrisonerIdIgnoreCaseAndOccurredAtGreaterThanEqual(
         request.objectId,
         request.dateFrom!!.atStartOfDay(),
         pageRequest,
@@ -79,7 +92,7 @@ class CellMovementService(
       cellMovementRepository.findByNomisCellIdIgnoreCase(request.objectId, pageRequest)
     } else {
       log.info("Finding history for nomisCellId [{}] since [{}]", request.objectId, request.dateFrom!!.atStartOfDay())
-      cellMovementRepository.findByNomisCellIdIgnoreCaseAndDateTimeGreaterThanEqual(
+      cellMovementRepository.findByNomisCellIdIgnoreCaseAndOccurredAtGreaterThanEqual(
         request.objectId,
         request.dateFrom!!.atStartOfDay(),
         pageRequest,
@@ -99,15 +112,16 @@ class CellMovementService(
     prisonerId = request.prisonerId,
     prisonerName = request.prisonerName,
     userId = request.userId,
-    dateTime = request.dateTime,
+    occurredAt = request.occurredAt,
     reason = request.reason,
     direction = direction,
+    recordedAt = LocalDateTime.now(clock),
   )
 
   private fun createPageRequest(request: MovementHistoryRequest) = PageRequest.of(
     request.page,
     request.pageSize,
-    Sort.by(Order.desc("dateTime")),
+    Sort.by(Order.desc("occurredAt")),
   )
 
   companion object {

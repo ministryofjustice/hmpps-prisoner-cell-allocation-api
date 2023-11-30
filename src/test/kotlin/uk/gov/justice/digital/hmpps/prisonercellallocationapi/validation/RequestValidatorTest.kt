@@ -23,7 +23,7 @@ class RequestValidatorTest {
 
   @Test
   fun `matching PrisonerIds accepted ignoring case`() {
-    val prisonerId = "A1234B"
+    val prisonerId = "A1234C"
     val request = requestFactory.aMovementRequest(prisonerId)
 
     assertDoesNotThrow("Exception thrown when validation is expected to pass") {

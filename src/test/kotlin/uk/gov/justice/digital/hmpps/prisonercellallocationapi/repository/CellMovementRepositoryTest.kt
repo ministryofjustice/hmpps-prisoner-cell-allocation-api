@@ -46,19 +46,20 @@ class CellMovementRepositoryTest : RepositoryTest() {
   @Test
   @Sql("classpath:repository/vacated-prisoner-multiple-residences.sql")
   fun `find first by prisoner id order by dateTime desc and id desc`() {
-    val result = repository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc("LEFT-2")
+    val result = repository.findFirstByPrisonerIdOrderByOccurredAtDesc("LEFT-2")
+    val expectedDate = LocalDateTime.of(2021, 1, 4, 1, 1, 1)
     assertThat(result).isPresent
     assertThat(result.get()).isEqualTo(
       CellMovement(
         410, "LII", "LII-CELL-B", "LEFT-2", "Former Prisoner", "USER1",
-        LocalDateTime.of(2021, 1, 4, 1, 1, 1), "Test data - stay two out", Direction.OUT,
+        expectedDate, expectedDate, "Test data - stay two out", Direction.OUT,
       ),
     )
   }
 
   @Test
   fun `result not present for prisoner id order by dateTime desc and id desc`() {
-    val result = repository.findFirstByPrisonerIdOrderByDateTimeDescIdDesc("LEFT-2")
+    val result = repository.findFirstByPrisonerIdOrderByOccurredAtDesc("LEFT-2")
     assertThat(result).isNotPresent
   }
 
@@ -80,7 +81,7 @@ class CellMovementRepositoryTest : RepositoryTest() {
   @Sql("classpath:repository/vacated-prisoner-one-residence.sql")
   fun `find movement history for empty cell with max date between arrival and release returns one movements`() {
     val maxTime = LocalDateTime.of(2020, 1, 3, 12, 30)
-    val result = repository.findByNomisCellIdIgnoreCaseAndDateTimeGreaterThanEqual("LII-CELL-A", maxTime, allResults)
+    val result = repository.findByNomisCellIdIgnoreCaseAndOccurredAtGreaterThanEqual("LII-CELL-A", maxTime, allResults)
     assertThat(result).hasSize(1)
   }
 
@@ -95,7 +96,7 @@ class CellMovementRepositoryTest : RepositoryTest() {
   @Sql("classpath:repository/vacated-prisoner-one-residence.sql")
   fun `find movement history for vacated prisoner with max date between arrival and release returns one movements`() {
     val maxTime = LocalDateTime.of(2020, 1, 3, 12, 30)
-    val result = repository.findByPrisonerIdIgnoreCaseAndDateTimeGreaterThanEqual("LEFT-1", maxTime, allResults)
+    val result = repository.findByPrisonerIdIgnoreCaseAndOccurredAtGreaterThanEqual("LEFT-1", maxTime, allResults)
     assertThat(result).hasSize(1)
   }
 
@@ -106,7 +107,8 @@ class CellMovementRepositoryTest : RepositoryTest() {
     prisonerId = " prisoner Id",
     prisonerName = "Adam Walker",
     userId = "user Id",
-    dateTime = LocalDateTime.now(),
+    occurredAt = LocalDateTime.now(),
+    recordedAt = LocalDateTime.now(),
     reason = "Reason",
     direction = direction,
   )
