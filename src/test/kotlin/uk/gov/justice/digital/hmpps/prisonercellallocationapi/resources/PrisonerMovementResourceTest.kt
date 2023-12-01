@@ -11,7 +11,7 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources.Prisoner
 class PrisonerMovementResourceTest : IntegrationTestBase() {
   @Test
   fun `The person successfully moved into the cell`() {
-    val prisonerId = "G7570GE"
+    val prisonerId = "G7570GB"
 
     move(IN, factory.aMovementRequest(prisonerId))
       .expectStatus().isOk
