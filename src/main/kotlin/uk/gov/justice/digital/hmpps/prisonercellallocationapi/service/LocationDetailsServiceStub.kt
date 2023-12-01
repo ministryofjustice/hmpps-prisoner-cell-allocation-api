@@ -10,6 +10,6 @@ class LocationDetailsServiceStub : LocationDetailsService() {
   override fun getDetails(nomisLocationId: String): LocationDetails {
     if (nomisLocationId.endsWith("9")) { throw RuntimeException("Cell Details not found") }
 
-    return LocationDetails(nomisLocationId, 2, true, "B", true)
+    return LocationDetails(nomisLocationId, nomisLocationId.last().digitToInt(), true, "B", true)
   }
 }

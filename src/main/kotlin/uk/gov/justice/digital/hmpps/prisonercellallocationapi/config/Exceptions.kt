@@ -27,11 +27,6 @@ data class NoCurrentAllocationException(
 ) : ClientException(status, userMessage, developerMessage)
 
 data class BusinessValidationException(
-  override val status: Int = 422,
-  override val userMessage: String = "One or more business validation rules were not met",
+  override val message: String = "One or more business validation rules were not met",
   val validationFailures: List<ValidationReason>,
-) : ClientException(
-  status,
-  userMessage,
-  validationFailures.map { validationReason -> validationReason.message }.toString(),
-)
+) : Exception(message)

@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.repository.CellMovementRepository
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.LocationDetailsService
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.PrisonerDetailsService
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.PrisonerDetailsService.PrisonerDetails
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.validation.BusinessValidator.ValidationReason
 
 @Component
 class NonAssociationsValidator(
@@ -12,48 +14,45 @@ class NonAssociationsValidator(
 ) : AbstractValidator() {
 
   override fun validate(
-    prisonerDetails: PrisonerDetailsService.PrisonerDetails,
+    prisonerDetails: PrisonerDetails,
     locationDetails: LocationDetailsService.LocationDetails,
-  ): List<BusinessValidator.ValidationReason> {
+  ): List<ValidationReason> {
+    log.info("Validating non associations")
     val currentOccupants = repository.findAllByPrisonerWhoseLastMovementWasIntoThisCell(locationDetails.nomisLocationId)
-    val occupantDetails = currentOccupants.map { o -> prisonerDetailsService.getDetails(o.prisonerId) }
+    val occupantDetails = currentOccupants.map { prisonerDetailsService.getDetails(it.prisonerId) }
     return ensureNoNonAssociationConflicts(prisonerDetails, occupantDetails)
   }
 
   private fun ensureNoNonAssociationConflicts(
-    prisoner: PrisonerDetailsService.PrisonerDetails,
-    occupants: List<PrisonerDetailsService.PrisonerDetails>,
-  ): List<BusinessValidator.ValidationReason> {
+    prisoner: PrisonerDetails,
+    occupants: List<PrisonerDetails>,
+  ): List<ValidationReason> {
     return ensurePrisonerIsNotInCurrentOccupantsNonAssociations(prisoner, occupants).plus(
       ensureCurrentOccupantsAreNotInPrisonersNonAssociations(prisoner, occupants),
     )
   }
 
   private fun ensurePrisonerIsNotInCurrentOccupantsNonAssociations(
-    prisoner: PrisonerDetailsService.PrisonerDetails,
-    currentOccupants: List<PrisonerDetailsService.PrisonerDetails>,
-  ): List<BusinessValidator.ValidationReason> {
-    return currentOccupants.map { occupant ->
-      isNonAssociation(occupant, prisoner.prisonerId).let {
-        log.warn("Occupant ${occupant.prisonerId} has ${prisoner.prisonerId} listed as a non-association")
-        BusinessValidator.ValidationReason.NON_ASSOCIATION_OF_RESIDENT
-      }
+    prisoner: PrisonerDetails,
+    currentOccupants: List<PrisonerDetails>,
+  ): List<ValidationReason> {
+    return currentOccupants.filter { isNonAssociation(it, prisoner.prisonerId) }.map {
+      log.warn("Occupant ${it.prisonerId} has ${prisoner.prisonerId} listed as a non-association")
+      ValidationReason.NON_ASSOCIATION_OF_RESIDENT
     }
   }
 
   private fun ensureCurrentOccupantsAreNotInPrisonersNonAssociations(
-    prisoner: PrisonerDetailsService.PrisonerDetails,
-    currentOccupants: List<PrisonerDetailsService.PrisonerDetails>,
-  ): List<BusinessValidator.ValidationReason> {
-    return currentOccupants.map { occupant ->
-      isNonAssociation(prisoner, occupant.prisonerId).let {
-        log.warn("Occupant ${occupant.prisonerId} is listed as a non-association of ${prisoner.prisonerId}")
-        BusinessValidator.ValidationReason.NON_ASSOCIATION_IN_CELL
-      }
+    prisoner: PrisonerDetails,
+    currentOccupants: List<PrisonerDetails>,
+  ): List<ValidationReason> {
+    return currentOccupants.filter { isNonAssociation(prisoner, it.prisonerId) }.map {
+      log.warn("Occupant ${it.prisonerId} is listed as a non-association of ${prisoner.prisonerId}")
+      ValidationReason.NON_ASSOCIATION_IN_CELL
     }
   }
 
-  private fun isNonAssociation(prisoner: PrisonerDetailsService.PrisonerDetails, prisonerId: String): Boolean {
+  private fun isNonAssociation(prisoner: PrisonerDetails, prisonerId: String): Boolean {
     return (prisoner.nonAssociations?.contains(prisonerId) == true)
   }
 }

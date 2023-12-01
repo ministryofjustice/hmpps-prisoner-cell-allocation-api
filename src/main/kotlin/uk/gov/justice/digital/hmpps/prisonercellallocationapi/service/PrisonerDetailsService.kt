@@ -14,6 +14,6 @@ abstract class PrisonerDetailsService {
     var lastName: String,
     var category: String,
     var dateOfBirth: LocalDate? = null,
-    var nonAssociations: Array<String>? = emptyArray(),
+    var nonAssociations: List<String>? = emptyList(),
   )
 }
