@@ -1,8 +1,11 @@
 package uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
+import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources.PrisonerMovementResourceTest.MoveDirection.IN
@@ -11,7 +14,7 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources.Prisoner
 class PrisonerMovementResourceTest : IntegrationTestBase() {
   @Test
   fun `The person successfully moved into the cell`() {
-    val prisonerId = "G7570GE"
+    val prisonerId = "G7570GB"
 
     move(IN, factory.aMovementRequest(prisonerId))
       .expectStatus().isOk
@@ -24,6 +27,54 @@ class PrisonerMovementResourceTest : IntegrationTestBase() {
     val prisonerId = "G8580GE"
 
     move(IN, factory.aMovementRequest("Different PrisonerId"), prisonerId).expectStatus().isBadRequest
+  }
+
+  @Test
+  @Sql("classpath:repository/non-association-in-cell.sql")
+  fun `The person unsuccessfully moved into cell due to non association in cell`() {
+    val prisonerId = "NA321B"
+
+    val errorResponse: ErrorResponse = getErrorResponse(
+      move(IN, factory.aMovementRequest(prisonerId, "NA-CELL-A2"), prisonerId)
+        .expectStatus()
+        .isEqualTo(422),
+    )
+    assertThat(errorResponse.validationErrors?.size).isEqualTo(1)
+  }
+
+  @Test
+  @Sql("classpath:repository/two-non-associations-in-cell.sql")
+  fun `The person unsuccessfully moved into cell due to two non associations in cell`() {
+    val prisonerId = "NA321B"
+
+    val errorResponse: ErrorResponse = getErrorResponse(
+      move(IN, factory.aMovementRequest(prisonerId, "NA-CELL-B3"), prisonerId)
+        .expectStatus()
+        .isEqualTo(422),
+    )
+    assertThat(errorResponse.validationErrors?.size).isEqualTo(2)
+  }
+
+  @Test
+  fun `The person unsuccessfully moved into cell due to exceeding opcap`() {
+    val prisonerId = "95371B"
+    val errorResponse: ErrorResponse = getErrorResponse(
+      move(IN, factory.aMovementRequest(prisonerId, "NA-CELL-0"), prisonerId)
+        .expectStatus()
+        .isEqualTo(422),
+    )
+    assertThat(errorResponse.validationErrors?.size).isEqualTo(1)
+  }
+
+  @Test
+  fun `The person unsuccessfully moved into cell due to wrong category`() {
+    val prisonerId = "94321X"
+    val errorResponse: ErrorResponse = getErrorResponse(
+      move(IN, factory.aMovementRequest(prisonerId), prisonerId)
+        .expectStatus()
+        .isEqualTo(422),
+    )
+    assertThat(errorResponse.validationErrors?.size).isEqualTo(1)
   }
 
   @Test
@@ -80,6 +131,10 @@ class PrisonerMovementResourceTest : IntegrationTestBase() {
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .bodyValue(request)
       .exchange()
+  }
+
+  private fun getErrorResponse(responseSpec: ResponseSpec): ErrorResponse {
+    return responseSpec.expectBody(ErrorResponse::class.java).returnResult().responseBody!!
   }
   enum class MoveDirection(val uriString: String) {
     IN("move-in"),

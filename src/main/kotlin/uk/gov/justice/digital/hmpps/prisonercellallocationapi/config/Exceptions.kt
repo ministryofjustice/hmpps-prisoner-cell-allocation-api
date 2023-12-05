@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.prisonercellallocationapi.config
 
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.validation.BusinessValidator.ValidationReason
+
 abstract class ClientException(
   open val status: Int? = null,
   open val userMessage: String? = null,
@@ -23,3 +25,8 @@ data class NoCurrentAllocationException(
   override val userMessage: String?,
   override val developerMessage: String?,
 ) : ClientException(status, userMessage, developerMessage)
+
+data class BusinessValidationException(
+  override val message: String = "One or more business validation rules were not met",
+  val validationFailures: List<ValidationReason>,
+) : Exception(message)

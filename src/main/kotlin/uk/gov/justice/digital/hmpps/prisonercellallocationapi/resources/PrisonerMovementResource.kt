@@ -18,12 +18,14 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMove
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.service.CellMovementService
+import uk.gov.justice.digital.hmpps.prisonercellallocationapi.validation.BusinessValidator
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.validation.RequestValidator
 
 @RestController
 @RequestMapping(value = ["/api/prisoner/{prisonerId}"], produces = ["application/json"])
 class PrisonerMovementResource(
   private val requestValidator: RequestValidator,
+  private val businessValidator: BusinessValidator,
   private val cellMovementService: CellMovementService,
 ) {
 
@@ -76,6 +78,8 @@ class PrisonerMovementResource(
   ): CellMovementResponse {
     log.info("Request to move prisoner [{}] into cell", prisonerId)
     requestValidator.validateMatchingPrisonerIds(prisonerId, cellMovementRequest)
+    businessValidator.checkMovePossible(prisonerId, cellMovementRequest.nomisCellId)
+
     return cellMovementService.moveIn(cellMovementRequest)
   }
 

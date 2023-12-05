@@ -5,9 +5,9 @@ import java.time.LocalDateTime
 
 class RequestFactory {
 
-  fun aMovementRequest(prisonerId: String): CellMovementRequest = CellMovementRequest(
+  fun aMovementRequest(prisonerId: String, nomisCellId: String = "CELL-1-1"): CellMovementRequest = CellMovementRequest(
     "MDI",
-    "CELL-1-1",
+    nomisCellId,
     prisonerId,
     "Batz Jerel",
     "guardian id",

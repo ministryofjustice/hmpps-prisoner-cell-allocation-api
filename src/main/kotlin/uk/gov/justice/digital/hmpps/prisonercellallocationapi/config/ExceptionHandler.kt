@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.UNAUTHORIZED
+import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -24,6 +25,21 @@ class ExceptionHandler {
           status = BAD_REQUEST,
           userMessage = "Validation failure: ${e.message}",
           developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(BusinessValidationException::class)
+  fun handleBusinessValidationException(e: BusinessValidationException): ResponseEntity<ErrorResponse> {
+    log.info("Validation exception: {}", e.message)
+    return ResponseEntity
+      .status(UNPROCESSABLE_ENTITY)
+      .body(
+        ErrorResponse(
+          status = UNPROCESSABLE_ENTITY,
+          userMessage = "Validation failure: ${e.message}",
+          developerMessage = e.message,
+          validationErrors = e.validationFailures.map { it.message },
         ),
       )
   }
@@ -122,12 +138,14 @@ data class ErrorResponse(
   val status: Int,
   val userMessage: String? = null,
   val developerMessage: String? = null,
+  val validationErrors: List<String>? = null,
 
 ) {
   constructor(
     status: HttpStatus,
     userMessage: String? = null,
     developerMessage: String? = null,
+    validationErrors: List<String>? = null,
   ) :
-    this(status.value(), userMessage, developerMessage)
+    this(status.value(), userMessage, developerMessage, validationErrors)
 }
