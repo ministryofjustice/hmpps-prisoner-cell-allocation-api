@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
+import org.springframework.web.util.DefaultUriBuilderFactory
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMovementRequest
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources.PrisonerMovementResourceTest.MoveDirection.IN
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.resources.PrisonerMovementResourceTest.MoveDirection.OUT
+import java.util.*
 
 class PrisonerMovementResourceTest : IntegrationTestBase() {
   @Test
@@ -78,6 +80,14 @@ class PrisonerMovementResourceTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `The person successfully moved into cell despite wrong category, suppress validation`() {
+    val prisonerId = "94321X"
+    move(IN, factory.aMovementRequest(prisonerId), prisonerId, force = true)
+      .expectStatus()
+      .isEqualTo(200)
+  }
+
+  @Test
   fun `The person unsuccessfully moved into the cell due to wrong role`() {
     val prisonerId = "G9590GE"
 
@@ -118,10 +128,16 @@ class PrisonerMovementResourceTest : IntegrationTestBase() {
     request: CellMovementRequest,
     prisonerId: String? = request.prisonerId,
     role: String = "ROLE_MAINTAIN_CELL_MOVEMENTS",
+    force: Boolean? = null,
   ): ResponseSpec {
+    val uriBuilder = DefaultUriBuilderFactory().builder().path("/api/prisoner/$prisonerId/${direction.uriString}?")
+      .queryParamIfPresent("force", Optional.ofNullable(force))
+
+    val uri = uriBuilder.build()
+
     return webTestClient
       .post()
-      .uri("/api/prisoner/$prisonerId/${direction.uriString}")
+      .uri(uri.path + uri.query.orEmpty())
       .headers(
         setAuthorisationWithUser(
           roles = listOf(role),

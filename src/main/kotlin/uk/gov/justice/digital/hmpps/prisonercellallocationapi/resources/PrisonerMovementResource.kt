@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.prisonercellallocationapi.model.dto.CellMoveResponse
@@ -75,10 +76,12 @@ class PrisonerMovementResource(
     @Valid
     @NotNull
     cellMovementRequest: CellMovementRequest,
+    @RequestParam
+    force: Boolean? = false,
   ): CellMovementResponse {
     log.info("Request to move prisoner [{}] into cell", prisonerId)
     requestValidator.validateMatchingPrisonerIds(prisonerId, cellMovementRequest)
-    businessValidator.checkMovePossible(prisonerId, cellMovementRequest.nomisCellId)
+    businessValidator.checkMovePossible(prisonerId, cellMovementRequest.nomisCellId, force)
 
     return cellMovementService.moveIn(cellMovementRequest)
   }

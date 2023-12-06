@@ -16,7 +16,7 @@ import uk.gov.justice.digital.hmpps.prisonercellallocationapi.utils.RequestFacto
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(JwtAuthHelper::class)
-@ActiveProfiles("test")
+@ActiveProfiles("test", "validate")
 abstract class IntegrationTestBase {
 
   @Suppress("SpringJavaInjectionPointsAutowiringInspection")
