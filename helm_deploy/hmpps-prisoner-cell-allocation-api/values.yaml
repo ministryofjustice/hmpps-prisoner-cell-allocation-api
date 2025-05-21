@@ -39,5 +39,3 @@ generic-service:
     groups:
       - internal
 
-generic-prometheus-alerts:
-  targetApplication: hmpps-prisoner-cell-allocation-api
